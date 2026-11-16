@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI動画スキル図鑑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* layout idea: 白か黒の地に、5色のステッカーと太い枠・ずらし影。動く見本を主役にした図鑑 */
+:root{
+  --bg:#ffffff; --surface:#f2f3f6; --ink:#0c0d12; --muted:#585e6c; --line:#dadde5;
+  --c1:#2b59ff; --c2:#ff4a3a; --c3:#ffc21a; --c4:#00a870; --c5:#8a4dff;
+  --accent:#2b59ff; --accent-ink:#ffffff; --warn:#a8530a; --muse:#00795c; --claude:#b8431a;
+  --code-bg:#0e1117; --code-ink:#e9ecf3;
+  --display:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Kaku Gothic ProN",sans-serif;
+  --body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sh:5px 5px 0 var(--ink);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#08090c; --surface:#15171d; --ink:#f3f4f7; --muted:#a3a9b6; --line:#2b2e38;
+    --c1:#6f93ff; --c2:#ff6b5c; --c3:#ffd04d; --c4:#35d39b; --c5:#ad82ff;
+    --accent:#6f93ff; --accent-ink:#08090c; --warn:#f2b55c; --muse:#4fd6b0; --claude:#f59a70;
+    --code-bg:#000000; --code-ink:#e9ecf3; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08090c; --surface:#15171d; --ink:#f3f4f7; --muted:#a3a9b6; --line:#2b2e38;
+  --c1:#6f93ff; --c2:#ff6b5c; --c3:#ffd04d; --c4:#35d39b; --c5:#ad82ff;
+  --accent:#6f93ff; --accent-ink:#08090c; --warn:#f2b55c; --muse:#4fd6b0; --claude:#f59a70;
+  --code-bg:#000000; --code-ink:#e9ecf3; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.8;-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--c1);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+h1,h2,h3{line-height:1.35;text-wrap:balance;margin:0}
+h1{font-family:var(--display);font-size:clamp(34px,7vw,68px);font-weight:400;line-height:1.15}
+h2{font-family:var(--display);font-size:clamp(22px,3.6vw,34px);font-weight:400}
+h3{font-size:18px;font-weight:900}
+p{margin:0}
+.lead{color:var(--muted);max-width:40em}
+section{padding:60px 0}
+.sec-head{display:grid;gap:10px;margin-bottom:28px}
+.stk{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;padding:3px 10px;border:2px solid var(--ink);border-radius:999px;background:var(--c3);color:#0c0d12;transform:rotate(-2deg);justify-self:start}
+.stk.b{background:var(--c1);color:#fff}.stk.r{background:var(--c2);color:#fff}.stk.g{background:var(--c4);color:#fff}.stk.v{background:var(--c5);color:#fff}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);background:var(--bg);padding:8px 16px;border-radius:999px;font-weight:900;font-size:14px;text-decoration:none;color:var(--ink);box-shadow:3px 3px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.btn.pri{background:var(--c1);color:#fff}
+.btn.yl{background:var(--c3);color:#0c0d12}
+.btn.sm{padding:4px 12px;font-size:12.5px;box-shadow:2px 2px 0 var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+/* header */
+header.top{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:2px solid var(--ink)}
+.top .wrap{display:flex;align-items:center;gap:14px;height:54px}
+.logo{font-family:var(--display);font-size:16px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.top nav{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:none}
+.top nav a{white-space:nowrap;font-size:13px;font-weight:700;color:var(--muted);text-decoration:none;padding:6px 9px;border-radius:6px}
+.top nav a:hover{color:var(--ink);background:var(--surface)}
+.theme{border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:900;white-space:nowrap}
+/* hero */
+.hero{padding:40px 0 30px;position:relative}
+.hero-grid{display:grid;gap:26px;grid-template-columns:1.05fr .95fr;align-items:center}
+.hero h1 em{font-style:normal;background:var(--c3);color:#0c0d12;padding:0 .12em;border-radius:.12em;display:inline-block;transform:rotate(-1.5deg)}
+.hero p.sub{font-size:18px;font-weight:700;margin-top:16px;max-width:25em}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.heroCv{width:100%;aspect-ratio:4/3;display:block;border:2px solid var(--ink);border-radius:20px;box-shadow:var(--sh);background:var(--surface)}
+.mq{border-block:2px solid var(--ink);background:var(--ink);color:var(--bg);overflow:hidden;white-space:nowrap;padding:8px 0;font-family:var(--display);font-size:15px}
+.mq div{display:inline-block;animation:mq 40s linear infinite;padding-left:0}
+.mq span{margin:0 18px}.mq span::before{content:"▶";margin-right:10px;color:var(--c3);font-size:11px}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* term tooltip */
+.term{border-bottom:2px dotted var(--c1);cursor:help;position:relative;font-weight:700}
+.term::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 8px);z-index:20;width:min(280px,70vw);background:var(--ink);color:var(--bg);font-size:13px;font-weight:500;line-height:1.6;padding:10px 12px;border-radius:10px;opacity:0;visibility:hidden;transition:opacity .15s;pointer-events:none}
+.term:hover::after,.term:focus::after{opacity:1;visibility:visible}
+.g2{display:grid;gap:20px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{display:grid;gap:20px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.box{border:2px solid var(--ink);border-radius:16px;padding:18px;display:grid;gap:10px;align-content:start;background:var(--bg)}
+.box.sh{box-shadow:var(--sh)}
+.box.fill{background:var(--surface)}
+.tag{display:inline-block;font-size:11.5px;font-weight:900;border-radius:999px;padding:1px 9px;border:2px solid currentColor;line-height:1.7;white-space:nowrap}
+.tag.muse{color:var(--muse)} .tag.claude{color:var(--claude)}
+.say{position:relative;background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:14px;line-height:1.65;font-weight:500}
+.say::before{content:"";position:absolute;left:22px;top:-7px;width:14px;height:14px;background:var(--ink);transform:rotate(45deg)}
+.caution{border-left:5px solid var(--c3);background:var(--surface);padding:12px 14px;border-radius:0 10px 10px 0;font-size:14px}
+.caution b{color:var(--warn)}
+.small{font-size:13px;color:var(--muted)}
+/* word table */
+.ana{border:2px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
+.ana .row{display:grid;grid-template-columns:170px 1fr 1.3fr;border-top:1px solid var(--line)}
+.ana .row:first-child{border-top:0;background:var(--ink);color:var(--bg);font-weight:700;font-size:13px}
+.ana .row>div{padding:12px 14px;font-size:14.5px;line-height:1.6}
+.ana .row>div:first-child{font-weight:900}
+.ana .dot{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:8px;border:2px solid var(--ink);vertical-align:-1px}
+/* prompt compare */
+.pc{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+.pbx{border:2px solid var(--ink);border-radius:12px;padding:12px;font-size:12.5px;line-height:1.7;background:var(--surface);position:relative}
+.pbx b.h{position:absolute;top:-11px;left:10px;background:var(--ink);color:var(--bg);font-size:11px;padding:0 8px;border-radius:999px}
+.pbx.s{background:var(--c3);color:#0c0d12;font-weight:900;font-size:14px}
+.pc .ar{font-family:var(--display);font-size:20px}
+/* repo mock */
+.win{border:2px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--bg);font-size:13px;line-height:1.5}
+.win .bar{display:flex;gap:8px;align-items:center;padding:7px 10px;background:var(--surface);border-bottom:2px solid var(--ink)}
+.win .dots{display:flex;gap:5px}.win .dots i{width:10px;height:10px;border-radius:50%;background:var(--c2)}.win .dots i:nth-child(2){background:var(--c3)}.win .dots i:nth-child(3){background:var(--c4)}
+.win .url{flex:1;background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:2px 9px;font-family:var(--mono);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.repo{padding:12px;display:grid;gap:10px}
+.repo .rh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.repo .nm{font-weight:700;font-family:var(--mono);font-size:13px}
+.repo .star{border:1.5px solid var(--line);border-radius:6px;padding:1px 8px;font-size:12px}
+.repo .codeb{background:var(--c4);color:#fff;border-radius:6px;padding:2px 10px;font-weight:700;font-size:12px}
+.repo .files{border:1.5px solid var(--line);border-radius:8px}
+.repo .files div{padding:5px 10px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;display:flex;justify-content:space-between;gap:8px}
+.repo .files div:first-child{border-top:0}
+.repo .files span{color:var(--muted);font-family:var(--body)}
+.repo .readme{border:1.5px solid var(--line);border-radius:8px;padding:10px;display:grid;gap:6px}
+.repo .cmd{background:var(--code-bg);color:var(--code-ink);font-family:var(--mono);font-size:12px;padding:6px 10px;border-radius:6px;overflow-x:auto;white-space:nowrap}
+.pin{display:inline-grid;place-items:center;width:21px;height:21px;border-radius:50%;background:var(--c2);color:#fff;font-family:var(--mono);font-size:11.5px;font-weight:700;flex:none;vertical-align:middle}
+.pins{display:grid;gap:9px;margin:0;padding:0;list-style:none}
+.pins li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:14.5px;line-height:1.6}
+.hl{outline:3px solid var(--c1);outline-offset:2px;border-radius:6px}
+.tree{font-family:var(--mono);font-size:13px;display:grid;gap:8px}
+.tree .f{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center}
+.tree .f span{font-family:var(--body);font-size:13.5px;background:var(--surface);padding:4px 10px;border-radius:8px}
+/* compare */
+.cmp{display:grid;gap:18px;grid-template-columns:1fr 1fr}
+.cvw{position:relative}
+.cvw canvas{width:100%;aspect-ratio:16/9;display:block;border:2px solid var(--ink);border-radius:14px}
+.cvw .lab{position:absolute;left:10px;top:-12px;font-size:12px;font-weight:900;background:var(--ink);color:var(--bg);padding:1px 12px;border-radius:999px;z-index:3}
+.cvw.on canvas{box-shadow:var(--sh)}.cvw.on .lab{background:var(--c2);color:#fff}
+.tgl{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{border:2px solid var(--ink);background:var(--bg);border-radius:999px;padding:4px 13px;font-size:13px;font-weight:900}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+table.t{width:100%;border-collapse:collapse;font-size:14.5px}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top;line-height:1.6}
+table.t th{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.scroll{overflow-x:auto}
+.big{font-family:var(--display);font-size:44px;line-height:1.05;font-variant-numeric:tabular-nums}
+.big small{font-size:16px;font-family:var(--mono)}
+/* demo */
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.tab{border:2px solid var(--ink);background:var(--bg);border-radius:12px;padding:10px 12px;font-size:14px;font-weight:900;text-align:left;line-height:1.4;box-shadow:3px 3px 0 var(--ink);display:grid;gap:2px}
+.tab small{font-weight:500;color:var(--muted);font-size:11.5px}
+.tab i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--c1)}
+.tab[aria-selected="true"]{background:var(--c3);color:#0c0d12;transform:translate(3px,3px);box-shadow:none}
+.tab[aria-selected="true"] small,.tab[aria-selected="true"] i{color:#0c0d12}
+.demo{display:grid;grid-template-columns:.8fr 1.2fr;gap:20px;align-items:start}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.steps button{width:100%;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;font-size:14.5px;line-height:1.55;font-weight:700}
+.steps .no{font-family:var(--display);font-size:15px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--ink);background:var(--bg)}
+.steps .tp{display:none;font-weight:500;font-size:13px;color:var(--muted);margin-top:4px}
+.steps li.done .no{background:var(--c4);color:#fff}
+.steps li.on button{border-color:var(--ink);box-shadow:var(--sh);background:var(--surface)}
+.steps li.on .no{background:var(--c2);color:#fff}
+.steps li.on .tp{display:block}
+.player{border:2px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:var(--sh);background:var(--surface)}
+.pbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-bottom:2px solid var(--ink);background:var(--bg)}
+.pbar .stepno{font-family:var(--mono);font-weight:700;font-size:12.5px;margin-left:auto}
+.capt{padding:10px 14px;font-size:16px;font-weight:900;line-height:1.5;background:var(--ink);color:var(--bg);min-height:3.3em;display:flex;align-items:center;gap:10px}
+.capt b{font-family:var(--display);font-weight:400;background:var(--c3);color:#0c0d12;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;flex:none;font-size:14px}
+.stage{position:relative;padding:14px;min-height:352px;overflow:hidden}
+.scr{display:none}.scr.on{display:block}
+.termw{background:var(--code-bg);color:var(--code-ink);font-family:var(--mono);font-size:12.5px;line-height:1.75;padding:12px 14px;min-height:280px;white-space:pre-wrap;word-break:break-all}
+.termw .p{color:#7ee0a8}.termw .o{color:#9aa3b5}
+.caret::after{content:"▍";animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+.chat{padding:12px;display:grid;gap:10px;min-height:236px;align-content:end}
+.msg{max-width:88%;padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.msg.u{justify-self:end;background:var(--c1);color:#fff;border-bottom-right-radius:4px}
+.msg.a{justify-self:start;background:var(--surface);border:1.5px solid var(--line);border-bottom-left-radius:4px}
+.inp{border:2px solid var(--ink);border-radius:12px;padding:8px 12px;min-height:40px;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-all;background:var(--bg)}
+.inp:empty::before{content:"メッセージを入力";color:var(--muted)}
+.vcard{margin-top:6px;width:170px;aspect-ratio:16/9;border-radius:8px;background:linear-gradient(135deg,var(--c1),var(--c5));position:relative;overflow:hidden;display:grid;place-items:center}
+.vcard::before{content:"";width:0;height:0;border-left:16px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent}
+.vcard::after{content:"video.mp4";position:absolute;left:6px;bottom:4px;font-family:var(--mono);font-size:10px;color:#fff}
+.setw{display:grid;grid-template-columns:120px 1fr;min-height:280px}
+.setw .side{border-right:1.5px solid var(--line);padding:10px;display:grid;gap:6px;align-content:start;font-size:12.5px}
+.setw .side div{padding:4px 8px;border-radius:6px}
+.setw .main{padding:12px;display:grid;gap:10px;align-content:start}
+.setw .plus{justify-self:end;border:2px solid var(--ink);border-radius:8px;width:30px;height:28px;display:grid;place-items:center;font-weight:700}
+.setw .menu{justify-self:end;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);font-size:12.5px;display:none}
+.setw .menu div{padding:6px 12px}
+.setw .dz{border:2px dashed var(--line);border-radius:10px;padding:16px;text-align:center;font-size:12.5px;color:var(--muted);display:none}
+.setw .lst{border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;display:none;justify-content:space-between;align-items:center;font-size:13px;font-weight:700}
+.setw .sw{width:34px;height:18px;border-radius:9px;background:var(--c4);position:relative}.setw .sw::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff}
+.cursor{position:absolute;left:0;top:0;width:24px;height:24px;z-index:10;pointer-events:none;transition:transform .7s cubic-bezier(.3,.8,.2,1);transform:translate(40px,40px)}
+.cursor::before{content:"";position:absolute;inset:0;background:var(--c2);clip-path:polygon(0 0,0 78%,24% 58%,42% 100%,58% 92%,40% 52%,72% 52%)}
+.cursor.click::after{content:"";position:absolute;left:-12px;top:-12px;width:30px;height:30px;border-radius:50%;border:3px solid var(--c2);animation:ck .6s ease-out}
+@keyframes ck{from{transform:scale(.3);opacity:1}to{transform:scale(1.5);opacity:0}}
+.ptip{padding:10px 14px;font-size:13.5px;border-top:2px solid var(--ink);background:var(--bg);line-height:1.6}
+.ptip b{color:var(--c1)}
+/* cards */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.cards{display:grid;gap:26px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{--k:var(--c1);border:2px solid var(--ink);border-radius:20px;display:grid;align-content:start;background:var(--bg);scroll-margin-top:70px;box-shadow:var(--sh);overflow:hidden;transition:transform .15s}
+.card:hover{transform:translate(-2px,-2px)}
+.card[data-cat="motion"]{--k:var(--c2)}.card[data-cat="look"]{--k:var(--c5)}.card[data-cat="auto"]{--k:var(--c4)}.card[data-cat="idea"]{--k:var(--c3)}.card[data-cat="parts"]{--k:var(--muted)}
+.card.flash{outline:5px solid var(--c3)}
+.card .hd{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:12px 16px;border-bottom:2px solid var(--ink);background:var(--surface)}
+.rank{font-family:var(--display);font-size:30px;line-height:1;background:var(--k);color:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px 10px;min-width:56px;text-align:center;transform:rotate(-4deg)}
+.rank small{font-size:12px;display:block;font-family:var(--body);font-weight:900}
+.rank.tx{font-size:15px;padding:12px 8px}
+.card h3{font-size:19px;line-height:1.3}
+.card .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.catp{font-size:11.5px;font-weight:900;padding:1px 9px;border-radius:999px;background:var(--k);color:#fff;border:2px solid var(--ink);line-height:1.7}
+.pvc{width:100%;aspect-ratio:16/9;display:block;border-bottom:2px solid var(--ink);background:var(--surface)}
+.card .bd{padding:16px;display:grid;gap:13px}
+.card .one{font-family:var(--display);font-size:19px;line-height:1.45}
+.card .desc{font-size:14.5px;line-height:1.75}
+.card ul{margin:0;padding-left:1.2em;font-size:14.5px;line-height:1.7}
+.pow{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.pow li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:14.5px;line-height:1.6;font-weight:700}
+.pow li::before{content:"";width:18px;height:18px;border-radius:50%;background:var(--k);border:2px solid var(--ink);margin-top:3px}
+.facts{display:flex;gap:6px;flex-wrap:wrap}
+.facts span{font-size:12px;background:var(--surface);border-radius:6px;padding:2px 8px;font-weight:700}
+.easy{border:2px solid var(--ink);border-radius:14px;overflow:hidden}
+.easy .eh{background:var(--c3);color:#0c0d12;font-weight:900;font-size:13px;padding:5px 12px;border-bottom:2px solid var(--ink)}
+.easy .eb{padding:10px 12px;display:grid;gap:8px;background:var(--bg)}
+.easy .txt{font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-break:break-all;font-family:var(--mono);background:var(--surface);border-radius:8px;padding:8px 10px}
+.easy .ea{display:flex;gap:8px;flex-wrap:wrap}
+.mini{border-top:2px dashed var(--line);padding-top:10px;display:none;gap:8px}
+.mini.on{display:grid}
+.mini .mw{border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.mini .mt{font-size:11.5px;font-weight:900;padding:4px 10px;background:var(--surface);border-bottom:2px solid var(--ink)}
+.mini .ml{padding:10px;display:grid;gap:8px;min-height:96px;align-content:end}
+.mini .mi{padding:0 10px 10px}
+.mini .ms{font-size:12.5px;font-weight:900;color:var(--c1)}
+.cmdrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:var(--code-bg);border-radius:10px;padding:8px 8px 8px 12px}
+.cmdrow code{font-family:var(--mono);font-size:12.5px;color:var(--code-ink);overflow-x:auto;white-space:pre;display:block;line-height:1.7}
+.cmdrow .btn{background:var(--code-ink);color:var(--code-bg);border-color:var(--code-ink);box-shadow:none}
+.lbl{font-size:12px;font-weight:900;color:var(--muted);margin-bottom:3px}
+.prm{background:var(--surface);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.7;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+details summary{cursor:pointer;font-weight:900;font-size:14px}
+details .in{display:grid;gap:10px;margin-top:10px}
+.card .ft{display:flex;gap:10px;flex-wrap:wrap}
+/* picker / builder */
+.q{display:grid;gap:8px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.res{border:2px solid var(--ink);border-radius:16px;padding:16px;display:grid;gap:10px;background:var(--c3);color:#0c0d12;box-shadow:var(--sh)}
+.res a{color:#0c0d12}.res .small{color:#3a3f4a}
+.res ol{margin:0;padding-left:1.3em;display:grid;gap:4px}
+.res .caution{background:#fff;color:#0c0d12}
+.form{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.form label{display:grid;gap:4px;font-size:13px;font-weight:900}
+.form select,.form input[type=text]{font:inherit;padding:8px 10px;border:2px solid var(--ink);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.form .wide{grid-column:1/-1}
+.out{background:var(--code-bg);color:var(--code-ink);border-radius:14px;padding:14px;font-size:14px;line-height:1.8;white-space:pre-wrap;border:2px solid var(--ink)}
+.todo{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.todo label{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15px;line-height:1.6;cursor:pointer}
+.todo input{width:20px;height:20px;margin-top:3px;accent-color:var(--c4)}
+.todo input:checked+span{color:var(--muted);text-decoration:line-through}
+.prog{height:12px;border-radius:6px;border:2px solid var(--ink);overflow:hidden}.prog i{display:block;height:100%;background:var(--c4);width:0;transition:width .3s}
+.faq details{border-bottom:1px solid var(--line);padding:12px 0}
+.faq details p{margin-top:8px;color:var(--muted);font-size:15px;max-width:44em}
+footer{padding:36px 0 60px;border-top:2px solid var(--ink);font-size:13px;color:var(--muted)}
+footer ul{margin:8px 0 0;padding-left:1.2em;display:grid;gap:2px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--c4);color:#fff;border:2px solid var(--ink);padding:8px 16px;border-radius:999px;font-size:13.5px;font-weight:900;opacity:0;transition:.25s;z-index:70;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (max-width:860px){
+  .hero-grid,.g2,.g3,.cmp,.demo,.cards,.form{grid-template-columns:1fr}
+  .tabs{grid-template-columns:1fr 1fr}
+  .demo .player{order:-1}
+  .ana .row{grid-template-columns:96px 1fr 1.2fr}.ana .row>div{padding:9px;font-size:13px}
+  .pc{grid-template-columns:1fr}.pc .ar{transform:rotate(90deg);justify-self:center}
+  section{padding:46px 0}
+  .setw{grid-template-columns:86px 1fr}
+  .tree .f{grid-template-columns:1fr}
+  .term{position:static}
+  .term::after{position:fixed;left:16px;right:16px;top:auto;bottom:16px;width:auto;z-index:60}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">AI動画スキル図鑑</a>
+  <nav aria-label="ページ内メニュー">
+    <a href="#kiso">基礎</a><a href="#chigai">違い</a><a href="#irekata">入れ方</a><a href="#zukan">ランキング</a><a href="#shindan">診断</a><a href="#shiji">指示文</a><a href="#check">チェック</a><a href="#qa">Q&amp;A</a>
+  </nav>
+  <button class="theme" id="themeBtn" type="button" aria-label="背景の色を切り替える">黒にする</button>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="stk">Muse / Claude 対応</span>
+    <h1 style="margin-top:14px">AI動画<br><em>スキル図鑑</em></h1>
+    <p class="sub">MuseとClaudeの動画づくりを一段上げるスキルを、人気順に整理。入れ方は実演つき、同じ操作をまねるだけ。</p>
+    <div class="cta">
+      <a class="btn pri" href="#irekata">入れ方の実演を見る</a>
+      <a class="btn yl" href="#zukan">ランキングへ</a>
+      <a class="btn" href="#kiso">スキルって何？から</a>
+    </div>
+  </div>
+  <canvas class="heroCv" data-pv="hero" aria-hidden="true"></canvas>
+</div></section>
+<div class="mq" aria-hidden="true"><div id="mq"></div></div>
+
+<section id="kiso"><div class="wrap">
+  <div class="sec-head">
+    <span class="stk b">STEP 1　基礎</span>
+    <h2>スキル・ライブラリ・GitHub。言葉は3つだけ</h2>
+    <p class="lead">ChatGPTやClaudeを使ったことがあれば、その感覚のまま理解できます。</p>
+  </div>
+  <div class="ana" role="table" aria-label="用語の説明">
+    <div class="row" role="row"><div>言葉</div><div>ひとことで</div><div>AIを使う人の感覚でいうと</div></div>
+    <div class="row" role="row"><div><i class="dot" style="background:var(--c1)"></i>AI本体<br><span class="small">Muse / Claude</span></div><div>動画を作る本人</div><div>ChatGPTと同じ、会話で頼める相手。動画づくりまで代わりに進めてくれる</div></div>
+    <div class="row" role="row"><div><i class="dot" style="background:var(--c2)"></i>スキル</div><div>AIに足す専用マニュアル</div><div>作り込んだ長いプロンプトと道具をひとまとめにして、AIに保存しておける機能。GPTsやカスタム指示の強化版</div></div>
+    <div class="row" role="row"><div><i class="dot" style="background:var(--c5)"></i>ライブラリ</div><div>AIが呼び出す動きの部品</div><div>動画編集アプリのエフェクトやテンプレートにあたる素材。AIがコードの中で自分から使う</div></div>
+    <div class="row" role="row"><div><i class="dot" style="background:var(--c4)"></i>GitHub</div><div>スキルの配布サイト</div><div>AI版のアプリストア。世界中の開発者が作ったスキルが無料で並ぶ</div></div>
+  </div>
+
+  <div class="g2" style="margin-top:26px">
+    <div class="box">
+      <h3>スキルは何のために使う？</h3>
+      <p>AIは賢くても、動画の作り方を毎回ゼロから考えると仕上がりがばらつきます。細かい長文プロンプトで補う手もありますが、毎回書くのは大変。その長文を丸ごと保存したものがスキルです。一度入れれば、短い一言で同じ品質を呼び出せます。</p>
+      <div class="pc" style="margin-top:8px">
+        <div class="pbx"><b class="h">スキルなし</b>10秒の動画を作って。文字は左寄せで大きく、登場は0.1秒ずつずらして、最後は少し弾ませて。色は3色まで、余白は広め。音は…（まだまだ続く）</div>
+        <div class="ar">→</div>
+        <div class="pbx s"><b class="h">スキルあり</b>hyperframes を使って、10秒の動画を作って</div>
+      </div>
+      <div class="say">スキルの本体は <span class="term" tabindex="0" data-tip="エスケーアイエルエル ドット エムディー。スキルの本体になる説明書ファイル。中身はふつうの文章で、メモ帳でも開ける">SKILL.md</span> という1枚の文章ファイル。AIはこれを読んでから作業を始めます。</div>
+    </div>
+    <div class="box">
+      <h3>スキルの中身をのぞくと</h3>
+      <div class="tree">
+        <div class="f"><b>hyperframes/</b><span>スキル1つ分のフォルダ</span></div>
+        <div class="f"><b>├ SKILL.md</b><span>手順書。いつ使うか、どう作るか</span></div>
+        <div class="f"><b>├ scripts/</b><span>AIが使う道具（小さなプログラム）</span></div>
+        <div class="f"><b>└ examples/</b><span>お手本になる完成例</span></div>
+      </div>
+      <p class="small">フォルダ名や中身はスキルごとに違います。共通点は SKILL.md が入っていること。</p>
+      <h3 style="margin-top:6px">スキルとライブラリの違い</h3>
+      <p>スキルはAIの「作り方」を変えるもの。ライブラリは動画に組み込まれる「素材」。ライブラリは必要なときAIが自分で取り込むので、名前を知っておくだけで役立ちます。</p>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:26px">
+    <div>
+      <h3 style="margin-bottom:10px">GitHubのページの見方（イメージ図）</h3>
+      <div id="repoFig"></div>
+    </div>
+    <div class="box fill">
+      <h3>見る場所は5つだけ</h3>
+      <ul class="pins">
+        <li><span class="pin">1</span><span><b>URL</b>　ページの住所。AIに渡すときに使う</span></li>
+        <li><span class="pin">2</span><span><b>作者名 / 作品名</b>　この組み合わせが<span class="term" tabindex="0" data-tip="GitHub上の作品1つ分の置き場。スキル1つにつきリポジトリが1つあるイメージ">リポジトリ</span>の名前</span></li>
+        <li><span class="pin">3</span><span><b>Star</b>　いいねの数。人気の目安になる</span></li>
+        <li><span class="pin">4</span><span><b>Code ボタン</b>　一式をZIPで保存できる</span></li>
+        <li><span class="pin">5</span><span><b>README</b>　説明ページ。入れ方の<span class="term" tabindex="0" data-tip="パソコンへの命令文。AIのチャットに貼って「これを実行して」と頼めば、代わりに実行してくれる">コマンド</span>がここに書いてある</span></li>
+      </ul>
+      <div class="say">英語だらけでも大丈夫。探すのは README の中の「Install」という見出しだけ。</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="chigai" style="background:var(--surface);border-block:2px solid var(--ink)"><div class="wrap">
+  <div class="sec-head">
+    <span class="stk r">STEP 2　違い</span>
+    <h2>スキルを入れる前と後で、何が変わる？</h2>
+    <p class="lead">下のボタンで、右の動画にスキルの効果を1つずつ重ねられます。左は何も入れていない状態。</p>
+  </div>
+  <div class="cmp">
+    <div>
+      <div class="cvw"><span class="lab">スキルなし</span><canvas data-pv="cmpA" aria-hidden="true"></canvas></div>
+      <p class="small" style="margin-top:10px">文字が中央にふわっと出るだけ。数字は一瞬で切り替わり、音もなし。</p>
+    </div>
+    <div>
+      <div class="cvw on"><span class="lab">スキルあり</span><canvas data-pv="cmpB" aria-hidden="true"></canvas></div>
+      <div class="tgl" role="group" aria-label="重ねるスキルの種類">
+        <button class="chip" type="button" aria-pressed="true" data-k="m">動きのスキル</button>
+        <button class="chip" type="button" aria-pressed="true" data-k="d">見た目のスキル</button>
+        <button class="chip" type="button" aria-pressed="true" data-k="s">音のスキル</button>
+      </div>
+    </div>
+  </div>
+  <p class="small" style="margin-top:10px">上の2つは違いを伝えるためのイメージ再現。実際の出力そのものではありません。</p>
+
+  <div class="g3" style="margin-top:28px">
+    <div class="box sh"><div class="big">16<small> / 16</small></div><h3>スキルなしでも動画は完成する</h3><p class="small">同じ15秒動画を16個のスキルで作り比べた公開検証では、スキルなしのClaude Codeも含めて全員が基本チェックを通過。作れるかどうかは変わりません。</p></div>
+    <div class="box sh"><div class="big" style="color:var(--c2)">10<small> / 16</small></div><h3>変わるのは見た目の個性</h3><p class="small">16個のうち10個は、スキルなしとはっきり違う独自の見た目に。残り6個は素の出力に近い結果でした。</p></div>
+    <div class="box sh"><div class="big" style="color:var(--c1)">9<small> / 16</small></div><h3>音が付くかはスキル次第</h3><p class="small">ナレーションや効果音まで入ったのは9個。音は動画の印象を大きく左右するので、選ぶときの分かれ目になります。</p></div>
+  </div>
+
+  <div class="scroll box" style="margin-top:24px">
+  <table class="t">
+    <thead><tr><th>くらべる点</th><th>スキルなし</th><th>スキルあり</th></tr></thead>
+    <tbody>
+      <tr><td><b>頼み方</b></td><td>動きや色を毎回こまかく説明</td><td>「このスキルで」と一言そえるだけ</td></tr>
+      <tr><td><b>見た目</b></td><td>よくある配色と中央ぞろえに寄りやすい</td><td>スキルが持つデザインの決まりに沿う</td></tr>
+      <tr><td><b>動き</b></td><td>フェードイン中心で単調になりやすい</td><td>時間差、緩急、カメラ移動が加わる</td></tr>
+      <tr><td><b>音</b></td><td>頼まないと無音のことが多い</td><td>声や効果音まで手順に含むスキルあり</td></tr>
+      <tr><td><b>確認</b></td><td>出来上がりを自分の目で確認</td><td>AIが自分でコマを見直す手順つきのスキルあり</td></tr>
+      <tr><td><b>時間</b></td><td>速い</td><td>2分から60分まで幅あり。凝るほど長い</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="caution" style="margin-top:16px;background:var(--bg)"><b>正直なところ</b>　検証元は見た目の優劣を付けておらず、単純な宣伝動画ならスキルなしで足りる場合もあると書いています。スキルは、仕上がりの方向を自分で選ぶための道具。そう考えるとちょうどよく付き合えます。</div>
+</div></section>
+
+<section id="irekata"><div class="wrap">
+  <div class="sec-head">
+    <span class="stk g">STEP 3　入れ方</span>
+    <h2>やり方を選ぶと、手順がその場で動き出す</h2>
+    <p class="lead">下の4つから自分に合う方法を押してください。左に全手順、右に操作の実演が出ます。画面は流れを伝えるイメージです。</p>
+  </div>
+  <div class="tabs" role="tablist" id="demoTabs"></div>
+  <div class="demo">
+    <ol class="steps" id="stepList"></ol>
+    <div class="player">
+      <div class="pbar">
+        <button class="btn sm pri" type="button" id="playB">▶ 再生</button>
+        <button class="btn sm" type="button" id="prevB">← 前へ</button>
+        <button class="btn sm" type="button" id="nextB">次へ →</button>
+        <span class="stepno" id="stepNo">1 / 5</span>
+      </div>
+      <div class="capt"><b id="capNo">1</b><span id="capt"></span></div>
+      <div class="stage" id="stage">
+        <div class="scr" id="scrRepo"></div>
+        <div class="scr" id="scrTerm"><div class="win"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="termTitle">ターミナル</span></div><div class="termw" id="termOut"></div></div></div>
+        <div class="scr" id="scrChat"><div class="win"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="chatTitle">AIとのチャット</span></div><div class="chat" id="chatLog"></div><div style="padding:0 12px 12px"><div class="inp" id="chatIn"></div></div></div></div>
+        <div class="scr" id="scrSet"><div class="win"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">Claudeアプリ（イメージ）</span></div><div class="setw"><div class="side"><div>チャット</div><div>プロジェクト</div><div id="sNav"><b>カスタマイズ</b></div><div id="sNav2">　└ スキル</div></div><div class="main"><b>スキル</b><div class="plus" id="sPlus">＋</div><div class="menu" id="sMenu"><div id="sMake">スキルを作成</div><div id="sUp">スキルをアップロード</div></div><div class="dz" id="sDz">ここにZIPファイルを置く<br><b id="sFile"></b></div><div class="lst" id="sLst"><span>追加したスキル</span><span class="sw"></span></div></div></div></div></div>
+        <div class="cursor" id="cur" aria-hidden="true"></div>
+      </div>
+      <div class="ptip"><b>ポイント</b>　<span id="tip"></span></div>
+    </div>
+  </div>
+  <p class="small" id="demoNote" style="margin-top:12px"></p>
+  <div class="g2" style="margin-top:24px">
+    <div class="box fill">
+      <h3>入れる前に用意するもの</h3>
+      <ul style="margin:0;padding-left:1.2em">
+        <li><span class="term" tabindex="0" data-tip="ノード ジェイエス。コマンドを動かすための無料ソフト。npx という命令はこれに含まれる">Node.js</span>　npx で始まるコマンドに必要</li>
+        <li><span class="term" tabindex="0" data-tip="エフエフエムペグ。画像の連なりを動画ファイルに仕上げる無料ソフト。多くの動画スキルが裏側で使う">FFmpeg</span>　動画ファイルに書き出すときに必要</li>
+        <li>分からなければ、AIに「Node.jsとFFmpegが入っているか確認して、なければ入れて」と頼めば進めてくれます</li>
+      </ul>
+    </div>
+    <div class="box fill">
+      <h3>入れる前の安全チェック</h3>
+      <ul style="margin:0;padding-left:1.2em">
+        <li>公式（開発元が配布）かどうかをまず確認</li>
+        <li>個人作のスキルは SKILL.md を開いて、変な指示がないか一読</li>
+        <li>AIが許可を求めてきたら、内容を読んでから承認</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<section id="zukan" style="background:var(--surface);border-block:2px solid var(--ink)"><div class="wrap">
+  <div class="sec-head">
+    <span class="stk v">STEP 4　ランキング</span>
+    <h2>人気と使いやすさで並べた図鑑</h2>
+    <p class="lead">順位は、スター数やインストール数と、入れやすさ・仕上がりまでの速さを合わせた編集判断。数字は2026年11月時点の公開情報、動く見本はスキルの特徴を表したイメージです。</p>
+  </div>
+  <div class="filters" id="filters" role="group" aria-label="絞り込み"></div>
+  <div class="cards" id="cards"></div>
+  <p class="small" id="noHit" hidden>条件に合うものがありません。</p>
+</div></section>
+
+<section id="shindan"><div class="wrap">
+  <div class="sec-head">
+    <span class="stk">診断</span>
+    <h2>2つ選ぶだけ。最初に入れる組み合わせ</h2>
+  </div>
+  <div class="g2">
+    <div class="box">
+      <div class="q"><b>使っているAIは？</b><div class="opts" id="qTool"></div></div>
+      <div class="q"><b>作りたいものは？</b><div class="opts" id="qGoal"></div></div>
+    </div>
+    <div class="res" id="pickRes" aria-live="polite"></div>
+  </div>
+</div></section>
+
+<section id="shiji" style="background:var(--surface);border-block:2px solid var(--ink)"><div class="wrap">
+  <div class="sec-head">
+    <span class="stk b">STEP 5　指示文</span>
+    <h2>指示文メーカー。選ぶだけで頼み方が完成</h2>
+    <p class="lead">うまくいく頼み方には型があります。スキル名、長さ、形、内容、雰囲気。この5つを入れるだけで仕上がりが安定。</p>
+  </div>
+  <div class="g2">
+    <form class="form box" id="pbForm">
+      <label>使うスキル<select id="pbSkill"></select></label>
+      <label>長さ<select id="pbLen"><option>10秒</option><option selected>15秒</option><option>30秒</option><option>60秒</option></select></label>
+      <label>画面の形<select id="pbRatio"><option value="縦型 9:16（リール・ショート向け）">縦型 9:16</option><option value="横型 16:9（YouTube向け）">横型 16:9</option><option value="正方形 1:1（フィード向け）">正方形 1:1</option></select></label>
+      <label>雰囲気<select id="pbMood"><option>白ベースですっきり</option><option>黒ベースで引き締まった印象</option><option>紙のような手ざわり</option><option>ニュース番組のような信頼感</option><option>ポップで明るい</option></select></label>
+      <label class="wide">伝えたい内容<input type="text" id="pbTopic" value="今週のAIニュース3選" maxlength="80"></label>
+      <label class="wide" style="grid-template-columns:auto 1fr;align-items:center;gap:8px"><input type="checkbox" id="pbSound" checked style="width:18px;height:18px">ナレーションと効果音も付ける</label>
+    </form>
+    <div style="display:grid;gap:12px;align-content:start">
+      <div class="out" id="pbOut"></div>
+      <div><button class="btn pri" type="button" id="pbCopy">指示文をコピー</button></div>
+      <div class="say">直してほしい時は「タイトルをもっと大きく」「2秒目の動きをゆっくり」のように、場所と変化をセットで伝えると通りやすい。</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="check"><div class="wrap">
+  <div class="sec-head">
+    <span class="stk g">チェックリスト</span>
+    <h2>はじめての1本までの6手順</h2>
+    <p class="small">チェックはこの端末のブラウザに保存されます。</p>
+  </div>
+  <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
+  <p class="small" id="progTxt" style="margin:6px 0 14px"></p>
+  <ul class="todo" id="todo"></ul>
+</div></section>
+
+<section id="qa"><div class="wrap">
+  <div class="sec-head"><span class="stk r">Q&amp;A</span><h2>つまずきやすい所</h2></div>
+  <div class="faq">
+    <details><summary>コマンドって何？ 黒い画面は必須？</summary><p>コマンドはパソコンへの命令文です。黒い画面（ターミナル）に打つのが本来の使い方ですが、Claude CodeやMuseのチャットに貼って「これを実行して」と頼めば、AIが代わりに実行してくれます。黒い画面を開かなくても進められます。</p></details>
+    <details><summary>ふつうのClaudeのチャットに貼っても入る？</summary><p>コマンドを実行してスキルを入れられるのは、Claude CodeやMuseのようにパソコンを操作できるAIです。ブラウザ版やアプリ版のClaudeのチャットは、ZIPファイルをアップロードする方式。入れ方の4つ目のタブを見てください。</p></details>
+    <details><summary>無料で使える？</summary><p>ここに載せたスキルとライブラリはGitHubで無料公開。ただしAI本体（MuseやClaude）の利用料や上限は別です。長い動画ほどAIの使用量が増える点に注意。</p></details>
+    <details><summary>npx でエラーになった</summary><p>Node.jsが入っていない可能性が高いです。AIに「Node.jsをインストールして」と頼んでからやり直してください。</p></details>
+    <details><summary>入れたのにスキルが使われない</summary><p>指示の中でスキルの名前を出すのが確実。「hyperframes を使って」のように書きます。Claude Codeなら「/」を打つと、入っているスキルの一覧が出ます。</p></details>
+    <details><summary>スマホだけでもできる？</summary><p>Museはクラウド上に自分用のパソコンを持つ仕組みなので、チャットで頼む方法ならスマホからも進められます。</p></details>
+    <details><summary>有料の教材や記事で紹介してもいい？</summary><p>リンクで紹介する分には問題になりにくいものの、中身を配る場合は各リポジトリのライセンスを確認してください。たとえばLemo-Opuscarは、スタイルの説明文が非商用ライセンスです。</p></details>
+    <details><summary>全部入れたほうがいい？</summary><p>入れすぎるとAIがどれを使うか迷いやすくなります。土台1つ、動き1つ、見た目か丸投げを1つ。まずは3つで十分。</p></details>
+    <details><summary>Museで本当に動く？</summary><p>Museが自分のスキルを読み込めること、スキル用フォルダに入れる手順は、利用者の公開レポートで確認しています。ただしこのページの作成時に各スキルをMuse上で動かす検証まではしていません。最初の1つで試してから増やすのが安全。</p></details>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>最終確認 2026年11月16日。スター数や手順は変わることがあるため、入れる前に各リポジトリの説明を確認してください。画面の実演と動く見本はすべてイメージです。</p>
+  <p style="margin-top:10px"><b>出典</b></p>
+  <ul>
+    <li><a href="https://github.com/zhuyansen/awesome-claude-video-skills" target="_blank" rel="noopener">awesome-claude-video-skills（16スキルの作り比べ検証）</a></li>
+    <li><a href="https://github.com/AdityaRaj2434/awesome-muse-ai-skills" target="_blank" rel="noopener">awesome-muse-ai-skills（Museへの入れ方）</a></li>
+    <li><a href="https://support.claude.com/ja/articles/12512180-using-skills-in-claude" target="_blank" rel="noopener">Claudeでスキルを使用する（公式ヘルプ）</a></li>
+    <li><a href="https://www.remotion.dev/docs/ai/skills" target="_blank" rel="noopener">Remotion Agent Skills（公式）</a></li>
+    <li><a href="https://pexo.ai/blog/best-video-generation-skills-for-claude-code-agents-2026-3772" target="_blank" rel="noopener">Best Video Generation Skills for Claude Code Agents（インストール数）</a></li>
+    <li><a href="https://zentor.ai/blog/best-claude-skills" target="_blank" rel="noopener">Best Claude Skills to Install in 2026（video-shotcraft）</a></li>
+  </ul>
+</div></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+
+var toastT;
+function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on")},1800)}
+function copyText(text){
+  var done=function(){toast("コピーしました")},fail=function(){toast("コピーできませんでした。文字を選択してコピーしてください")};
+  try{navigator.clipboard.writeText(text).then(done,fail)}catch(e){fail()}
+}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-copy]");if(b){copyText(b.getAttribute("data-copy"))}});
+
+/* ---------- theme + canvas colors ---------- */
+var root=document.documentElement,themeBtn=$("#themeBtn"),C={};
+function readC(){var s=getComputedStyle(root),g=function(n){return s.getPropertyValue(n).trim()};
+  C={bg:g("--bg"),sur:g("--surface"),ink:g("--ink"),mut:g("--muted"),line:g("--line"),c1:g("--c1"),c2:g("--c2"),c3:g("--c3"),c4:g("--c4"),c5:g("--c5")};C.pal=[C.c1,C.c2,C.c3,C.c4,C.c5]}
+function isDark(){var t=root.getAttribute("data-theme");if(t)return t==="dark";return window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches}
+function paintTheme(){themeBtn.textContent=isDark()?"白にする":"黒にする";readC();drawAllOnce()}
+var saved=store("avz-theme");if(saved==="dark"||saved==="light")root.setAttribute("data-theme",saved);
+themeBtn.addEventListener("click",function(){var n=isDark()?"light":"dark";root.setAttribute("data-theme",n);store("avz-theme",n);paintTheme()});
+
+/* ---------- canvas helpers ---------- */
+function cl(x){return x<0?0:x>1?1:x}
+function seg(t,a,b){return cl((t-a)/(b-a))}
+var E={out:function(t){return 1-Math.pow(1-t,3)},io:function(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2},
+ back:function(t){var c=1.70158;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)},
+ el:function(t){return t<=0?0:t>=1?1:Math.pow(2,-10*t)*Math.sin((t*10-.75)*2.0944)+1}};
+function hs(n){var x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)}
+function rr(c,x,y,w,h,r){r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath()}
+function mono(p){return "700 "+p+"px 'JetBrains Mono',monospace"}
+function sans(p){return "900 "+p+"px 'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN',sans-serif"}
+function disp(p){return p+"px 'Dela Gothic One','Zen Kaku Gothic New',sans-serif"}
+function lerp(a,b,k){return a+(b-a)*k}
+function tri(c,x,y,s,rot){c.save();c.translate(x,y);c.rotate(rot||0);c.beginPath();c.moveTo(s,0);c.lineTo(-s*.6,-s*.8);c.lineTo(-s*.6,s*.8);c.closePath();c.fill();c.restore()}
+function fmt(n){return Math.round(n).toLocaleString("ja-JP")}
+
+var PV={};
+/* hero */
+PV.hero=function(c,w,h,t){
+  c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  var i,n=26;
+  for(i=0;i<n;i++){var a=hs(i),b=hs(i+50),sp=.15+hs(i+9)*.35,x=(a*w+Math.sin(t*sp+i)*40+w)%w,y=(b*h+Math.cos(t*sp*1.3+i*2)*34+h)%h,s=10+hs(i+3)*26,col=C.pal[i%5],k=i%4;
+    c.fillStyle=col;c.strokeStyle=C.ink;c.lineWidth=2;c.save();c.translate(x,y);c.rotate(t*sp*(i%2?1:-1)+i);
+    if(k===0){c.beginPath();c.arc(0,0,s*.6,0,7);c.fill();c.stroke()}
+    else if(k===1){rr(c,-s*.55,-s*.55,s*1.1,s*1.1,4);c.fill();c.stroke()}
+    else if(k===2){c.beginPath();c.moveTo(s*.7,0);c.lineTo(-s*.5,-s*.65);c.lineTo(-s*.5,s*.65);c.closePath();c.fill();c.stroke()}
+    else{c.fillRect(-s*.6,-s*.14,s*1.2,s*.28);c.fillRect(-s*.14,-s*.6,s*.28,s*1.2)}
+    c.restore()}
+  var fw=w*.62,fh=fw*9/16,fx=(w-fw)/2,fy=(h-fh)/2-8+Math.sin(t*1.2)*5;
+  c.fillStyle=C.ink;rr(c,fx+7,fy+7,fw,fh,14);c.fill();
+  c.fillStyle=C.bg;rr(c,fx,fy,fw,fh,14);c.fill();c.strokeStyle=C.ink;c.lineWidth=3;c.stroke();
+  c.save();rr(c,fx,fy,fw,fh,14);c.clip();
+  var u=t%6,k1=E.back(seg(u,.2,.9)),k2=E.back(seg(u,.5,1.2)),o=1-seg(u,5.3,5.9);
+  c.globalAlpha=o;
+  c.fillStyle=C.c2;c.beginPath();c.arc(fx+fw*.84,fy+fh*.2,fh*.3*E.out(seg(u,0,.8)),0,7);c.fill();
+  c.fillStyle=C.ink;c.font=disp(fh*.2);c.textBaseline="alphabetic";c.fillText("AI動画",fx+fw*.08+(1-k1)*-fw*.5,fy+fh*.36);
+  c.fillStyle=C.c1;c.fillText("スキル",fx+fw*.08+(1-k2)*-fw*.5,fy+fh*.62);
+  for(i=0;i<6;i++){var kb=E.back(seg(u,1.3+i*.1,2+i*.1)),bh=fh*(.08+.05*((i*7)%5))*Math.max(0,kb);c.fillStyle=C.pal[i%5];c.fillRect(fx+fw*.56+i*fw*.065,fy+fh*.86-bh,fw*.045,bh)}
+  c.globalAlpha=1;c.restore();
+  var ty=fy+fh+16;c.fillStyle=C.line;rr(c,fx,ty,fw,8,4);c.fill();c.fillStyle=C.c1;rr(c,fx,ty,fw*(u/6),8,4);c.fill();
+  c.fillStyle=C.ink;c.beginPath();c.arc(fx+fw*(u/6),ty+4,8,0,7);c.fill();
+};
+/* compare */
+function cmpBase(c,w,h){c.fillStyle="#e7e9ee";c.fillRect(0,0,w,h)}
+PV.cmpA=function(c,w,h,t){var u=t%6,a=Math.min(seg(u,0,.7),1-seg(u,5.3,6));cmpBase(c,w,h);
+  c.globalAlpha=a;c.fillStyle="#30343d";c.textAlign="center";c.textBaseline="middle";
+  c.font="700 "+h*.1+"px Arial,sans-serif";c.fillText("今週のAIニュース",w/2,h*.3);
+  c.font="700 "+h*.16+"px Arial,sans-serif";c.fillText(u<1.6?"0":"12,800",w/2,h*.52);
+  c.font="400 "+h*.06+"px Arial,sans-serif";c.fillText("サンプル数値",w/2,h*.7);
+  c.globalAlpha=1;c.textAlign="left"};
+var FL={m:1,d:1,s:1};
+PV.cmpB=function(c,w,h,t){
+  var u=t%6,M=FL.m,D=FL.d,S=FL.s,a=Math.min(seg(u,0,.7),1-seg(u,5.3,6)),i;
+  if(!D){cmpBase(c,w,h)}else{c.fillStyle="#f5efe2";c.fillRect(0,0,w,h)}
+  c.save();
+  if(M){var z=1+.06*seg(u,0,6);c.translate(w/2,h/2);c.scale(z,z);c.translate(-w/2,-h/2)}
+  var out=1-seg(u,5.3,5.9);
+  if(D){
+    c.strokeStyle="rgba(20,17,12,.08)";c.lineWidth=1;for(i=1;i<8;i++){c.beginPath();c.moveTo(w*i/8,0);c.lineTo(w*i/8,h);c.stroke()}
+    var ck=M?E.back(seg(u,0,.9)):1;c.fillStyle="#d43a1c";c.beginPath();c.arc(w*.86+(M?Math.sin(t)*6:0),h*.2,h*.34*ck,0,7);c.fill();
+    c.fillStyle="#14110c";c.fillRect(w*.07,h*.13,w*.012,h*.5*(M?E.out(seg(u,.1,.8)):1));
+    var words=["今週の","AI","ニュース"],x=w*.11;c.textBaseline="alphabetic";c.font=disp(h*.13);
+    words.forEach(function(wd,j){var k=M?E.back(seg(u,.25+j*.14,.9+j*.14)):a;c.globalAlpha=M?cl(k*2)*out:a;c.fillStyle=j===1?"#d43a1c":"#14110c";c.fillText(wd,x,h*.3+(M?(1-k)*h*.14:0));x+=c.measureText(wd).width+w*.012});
+    c.globalAlpha=M?out:a;
+    var nk=M?E.out(seg(u,1,2.6)):(u<1.6?0:1);c.font=mono(h*.24);c.fillStyle="#14110c";c.fillText(fmt(12800*nk),w*.105,h*.6);
+    c.font=sans(h*.05);c.fillStyle="#14110c";rr(c,w*.11,h*.66,w*.2,h*.085,h*.04);c.fill();c.fillStyle="#f5efe2";c.textBaseline="middle";c.fillText("サンプル数値",w*.125,h*.705);
+    for(i=0;i<5;i++){var bk=M?E.back(seg(u,1.4+i*.12,2.2+i*.12)):(u<1.6?0:1),bh=h*(.1+.07*i)*Math.max(0,bk);c.fillStyle=i===4?"#d43a1c":"#14110c";c.fillRect(w*.62+i*w*.062,h*.74-bh,w*.042,bh)}
+  }else{
+    c.fillStyle="#30343d";c.textAlign="center";c.textBaseline="middle";
+    var ws=["今週の","AI","ニュース"];c.font="700 "+h*.1+"px Arial,sans-serif";
+    if(M){var tw=c.measureText(ws.join("")).width,xx=w/2-tw/2;c.textAlign="left";ws.forEach(function(wd,j){var k=E.back(seg(u,.2+j*.14,.9+j*.14));c.globalAlpha=cl(k*2)*out;c.fillText(wd,xx,h*.3+(1-k)*h*.14);xx+=c.measureText(wd).width});c.textAlign="center";c.globalAlpha=out}
+    else{c.globalAlpha=a;c.fillText(ws.join(""),w/2,h*.3)}
+    c.font="700 "+h*.16+"px Arial,sans-serif";c.fillText(M?fmt(12800*E.out(seg(u,1,2.6))):(u<1.6?"0":"12,800"),w/2,h*.52);
+    c.font="400 "+h*.06+"px Arial,sans-serif";c.fillText("サンプル数値",w/2,h*.7);c.textAlign="left";
+  }
+  c.globalAlpha=1;c.restore();
+  if(S){var col=D?"#14110c":"#30343d";c.fillStyle=col;
+    for(i=0;i<14;i++){var v=(.25+.75*Math.abs(Math.sin(t*6+i*1.3)*Math.sin(t*2.1+i)))*h*.1;c.fillRect(w*.05+i*w*.014,h*.92-v,w*.008,v)}
+    var cap=["今週の","注目は","この3つ"],ci=Math.floor(u/2)%3;c.font=sans(h*.055);c.textBaseline="middle";
+    var cw=0;cap.forEach(function(s){cw+=c.measureText(s).width+w*.012});var cx=w*.95-cw-w*.03;
+    c.fillStyle="#111";rr(c,cx-w*.015,h*.83,cw+w*.03,h*.1,h*.02);c.fill();
+    cap.forEach(function(s,j){c.fillStyle=j===ci?"#ffc21a":"#fff";c.fillText(s,cx,h*.882);cx+=c.measureText(s).width+w*.012});
+    var pb=1+.25*Math.max(0,Math.sin(t*6));c.fillStyle=D?"#d43a1c":"#30343d";c.beginPath();c.arc(w*.03,h*.87,h*.018*pb,0,7);c.fill()}
+};
+/* HyperFrames */
+PV.hf=function(c,w,h,t){
+  var T=7.4,u=t%T,cw=w*.44,i,k;c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  c.fillStyle="#0e1117";rr(c,10,10,cw-16,h-20,8);c.fill();
+  var L=['<h1 class="title">','<img src="shot.png">','<div class="bars">','<p class="caption">','gsap.to(".title")','render → video.mp4'],fs=Math.max(7.5,Math.min(12,w/44));
+  c.save();rr(c,10,10,cw-16,h-20,8);c.clip();c.font=mono(fs);c.textBaseline="middle";var act=Math.min(5,Math.floor(u));
+  for(i=0;i<3;i++){c.fillStyle=["#ff5f57","#febc2e","#28c840"][i];c.beginPath();c.arc(22+i*11,22,3.5,0,7);c.fill()}
+  L.forEach(function(s,j){var y=44+j*fs*2;k=seg(u,j,j+.6);if(k<=0)return;if(j===act){c.fillStyle="rgba(255,255,255,.12)";c.fillRect(12,y-fs,cw-20,fs*2)}
+    c.fillStyle="#5d6678";c.fillText(String(j+1),18,y);c.fillStyle=j===act?"#fff":(j>3?"#ffc21a":"#8fb4ff");c.fillText(s.slice(0,Math.ceil(s.length*k)),34,y)});
+  c.restore();
+  var fx=cw+6,fw=w-fx-12,fy=10,fh=h-46;c.fillStyle=C.ink;rr(c,fx+4,fy+4,fw,fh,8);c.fill();c.fillStyle=C.bg;rr(c,fx,fy,fw,fh,8);c.fill();c.strokeStyle=C.ink;c.lineWidth=2;c.stroke();
+  c.save();rr(c,fx,fy,fw,fh,8);c.clip();
+  var wob=u>4&&u<5.4?Math.sin((u-4)*9)*6*(1-seg(u,4,5.4)):0;
+  k=E.back(seg(u,.2,.9));if(k>0){c.fillStyle=C.c1;rr(c,fx+12-(1-k)*90+wob,fy+12,fw*.56,fh*.17,5);c.fill();c.fillStyle="#fff";c.font=sans(fh*.095);c.textBaseline="middle";c.fillText("新発売",fx+20-(1-k)*90+wob,fy+12+fh*.09)}
+  k=E.out(seg(u,1.2,1.9));if(k>0){c.fillStyle=C.c3;rr(c,fx+12,fy+fh*.33,fw*.38*k,fh*.4,6);c.fill();c.fillStyle=C.ink;c.globalAlpha=k;c.beginPath();c.arc(fx+12+fw*.19,fy+fh*.53,fh*.1,0,7);c.fill();c.globalAlpha=1}
+  for(i=0;i<4;i++){k=E.back(seg(u,2.2+i*.1,2.9+i*.1));var bh=fh*(.16+.08*i)*Math.max(0,k);c.fillStyle=i%2?C.c2:C.ink;c.fillRect(fx+fw*.56+i*fw*.1,fy+fh*.73-bh,fw*.07,bh)}
+  k=E.out(seg(u,3.2,3.8));if(k>0){c.globalAlpha=k;c.fillStyle=C.ink;rr(c,fx+12,fy+fh*.81,fw*.62,fh*.12,fh*.06);c.fill();c.fillStyle=C.bg;c.font=sans(fh*.07);c.fillText("字幕もそのまま表示",fx+22,fy+fh*.875);c.globalAlpha=1}
+  k=seg(u,5,6.2);if(k>0&&k<1){c.fillStyle=C.c4;c.globalAlpha=.22;c.fillRect(fx,fy,fw*k,fh);c.globalAlpha=1;c.fillRect(fx+fw*k-2,fy,4,fh)}
+  c.restore();
+  k=E.back(seg(u,6.2,6.6));if(k>0){c.save();c.translate(fx+fw-34,fy+24);c.scale(k,k);c.rotate(.12);c.fillStyle=C.c4;rr(c,-28,-13,56,26,13);c.fill();c.strokeStyle=C.ink;c.stroke();c.fillStyle="#fff";c.font=mono(12);c.textAlign="center";c.textBaseline="middle";c.fillText("MP4",0,1);c.restore();c.textAlign="left"}
+  var ty=h-22;c.fillStyle=C.line;rr(c,fx,ty,fw,6,3);c.fill();c.fillStyle=C.c1;rr(c,fx,ty,fw*(u/T),6,3);c.fill();c.fillStyle=C.ink;c.beginPath();c.arc(fx+fw*(u/T),ty+3,5,0,7);c.fill();
+};
+/* Remotion */
+PV.rm=function(c,w,h,t){
+  var u=t%5,i,j;c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  var names=["A社","B社","C社","D社"],vals=[128,342,76,510],n=4,pw=w*.18,ph=h*.66,gap=(w-pw*n)/(n+1);
+  for(i=0;i<n;i++){var x=gap+i*(pw+gap),d=i*.18,k=E.back(seg(u,d,d+.6)),y=10+(1-k)*30,o=1-seg(u,4.4,4.9);
+    c.globalAlpha=cl(k)*o;c.fillStyle=C.ink;rr(c,x+3,y+3,pw,ph,8);c.fill();c.fillStyle=C.bg;rr(c,x,y,pw,ph,8);c.fill();c.strokeStyle=C.ink;c.lineWidth=2;c.stroke();
+    c.fillStyle=C.pal[i];rr(c,x+6,y+6,pw-12,ph*.2,5);c.fill();c.fillStyle="#fff";c.font=sans(ph*.1);c.textBaseline="middle";c.fillText(names[i],x+12,y+6+ph*.1);
+    var ck=E.out(seg(u,d+.5,d+2));c.fillStyle=C.ink;c.font=mono(ph*.17);c.fillText(fmt(vals[i]*ck),x+8,y+ph*.42);
+    for(j=0;j<4;j++){var bk=E.back(seg(u,d+.8+j*.1,d+1.5+j*.1)),bh=ph*(.08+hs(i*9+j)*.26)*Math.max(0,bk);c.fillStyle=j===3?C.pal[i]:C.ink;c.fillRect(x+8+j*(pw-16)/4,y+ph*.94-bh,(pw-16)/4-3,bh)}
+    c.globalAlpha=1}
+  var sy=h*.8,sh=h*.16,fw2=sh*1.5,off=(t*40)%(fw2+6);c.fillStyle=C.ink;c.fillRect(0,sy-4,w,sh+8);
+  for(i=-1;i<w/(fw2+6)+1;i++){var fx=i*(fw2+6)-off;c.fillStyle=C.sur;rr(c,fx,sy,fw2,sh,3);c.fill();c.fillStyle=C.mut;c.font=mono(sh*.34);c.textBaseline="middle";var fno=Math.floor(t*40/(fw2+6))+i;c.fillText("f"+("000"+((fno%900+900)%900)).slice(-3),fx+4,sy+sh/2)}
+  c.fillStyle=C.c2;c.fillRect(w/2-1.5,sy-8,3,sh+16);
+};
+/* GSAP */
+PV.gs=function(c,w,h,t){
+  var u=t%4.6,i,k;c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  var word="MOTION",fs=h*.3;c.font=disp(fs);c.textBaseline="alphabetic";var tw=c.measureText(word).width,x=(w-tw)/2;
+  for(i=0;i<word.length;i++){var ch=word[i],cwid=c.measureText(ch).width,ki=E.el(seg(u,.1+i*.09,1.2+i*.09)),ko=E.io(seg(u,3.8+i*.05,4.3+i*.05));
+    c.save();c.translate(x+cwid/2,h*.44+(1-ki)*-h*.5+ko*h*.7);c.rotate((1-ki)*.6);c.fillStyle=C.ink;c.fillText(ch,-cwid/2+3,3);c.fillStyle=C.pal[i%5];c.fillText(ch,-cwid/2,0);c.restore();x+=cwid}
+  var gx=w*.06,gy=h*.58,gw=w*.3,gh=h*.34;c.strokeStyle=C.line;c.lineWidth=1.5;c.strokeRect(gx,gy,gw,gh);
+  c.strokeStyle=C.c2;c.lineWidth=3;c.beginPath();for(i=0;i<=40;i++){var p=i/40,yy=gy+gh-E.back(p)*gh*.8;if(i)c.lineTo(gx+p*gw,yy);else c.moveTo(gx,yy)}c.stroke();
+  k=seg(u,.6,2.6);c.fillStyle=C.ink;c.beginPath();c.arc(gx+k*gw,gy+gh-E.back(k)*gh*.8,6,0,7);c.fill();
+  c.fillStyle=C.mut;c.font=mono(Math.max(8,h*.055));c.textBaseline="top";c.fillText("ease: back.out",gx,gy+gh+3);
+  var px=w*.46,pw=w*.48,py=h*.76;c.strokeStyle=C.line;c.lineWidth=2;c.setLineDash([5,5]);c.beginPath();for(i=0;i<=40;i++){var q=i/40,xx=px+q*pw,y2=py+Math.sin(q*Math.PI*2)*h*.13;if(i)c.lineTo(xx,y2);else c.moveTo(xx,y2)}c.stroke();c.setLineDash([]);
+  for(i=5;i>=0;i--){k=E.io(seg(u,.8-i*.0+ i*-.06+.3,3.2+i*-.06+.3));var x3=px+k*pw,y3=py+Math.sin(k*Math.PI*2)*h*.13,s=h*.07;c.globalAlpha=i?.12:1;c.fillStyle=C.c1;c.save();c.translate(x3,y3);c.rotate(k*6.283);rr(c,-s,-s,s*2,s*2,4);c.fill();c.restore()}
+  c.globalAlpha=1;
+};
+/* Lemo: 99 tiles */
+function tile(c,x,y,s,i,t){
+  var k=i%9,col=C.pal[i%5],col2=C.pal[(i+2)%5],ph=hs(i)*6.28,tt=t*(1+hs(i+7))+ph,m=s/2;
+  c.save();c.beginPath();c.rect(x,y,s,s);c.clip();c.fillStyle=(i%2)?C.bg:C.sur;if(i%7===3)c.fillStyle=C.ink;c.fillRect(x,y,s,s);c.translate(x+m,y+m);
+  if(k===0){c.fillStyle=col;c.beginPath();c.arc(Math.sin(tt*2)*m*.5,-Math.abs(Math.sin(tt*3))*m*.7+m*.4,s*.16,0,7);c.fill()}
+  else if(k===1){c.rotate(tt);c.fillStyle=col;c.fillRect(-s*.24,-s*.24,s*.48,s*.48)}
+  else if(k===2){c.rotate(.78);c.fillStyle=col;var o=(tt*s*.3)%(s*.4);for(var j=-4;j<5;j++)c.fillRect(j*s*.4+o-s,-s,s*.18,s*2)}
+  else if(k===3){for(var r=3;r>0;r--){c.fillStyle=r%2?col:col2;c.beginPath();c.arc(0,0,Math.max(0,s*.15*r*(.7+.3*Math.sin(tt*2+r))),0,7);c.fill()}}
+  else if(k===4){c.fillStyle=col;for(var b=0;b<4;b++){var bh=s*.7*Math.abs(Math.sin(tt*2.4+b*1.1));c.fillRect(-s*.38+b*s*.2,m*.8-bh,s*.14,bh)}}
+  else if(k===5){c.strokeStyle=col;c.lineWidth=Math.max(1.5,s*.08);c.beginPath();for(var q=0;q<=10;q++){var xx=-m+q*s/10,yy=Math.sin(q*.9+tt*3)*s*.24;if(q)c.lineTo(xx,yy);else c.moveTo(xx,yy)}c.stroke()}
+  else if(k===6){c.fillStyle=col2;c.beginPath();c.arc(0,0,s*.1,0,7);c.fill();c.fillStyle=col;for(var d=0;d<3;d++){var an=tt*2+d*2.09;c.beginPath();c.arc(Math.cos(an)*s*.3,Math.sin(an)*s*.3,s*.08,0,7);c.fill()}}
+  else if(k===7){var wv=(Math.sin(tt*1.6)+1)/2;c.fillStyle=col;c.fillRect(-m,-m,s*wv,s);c.fillStyle=col2;c.fillRect(-m+s*wv-s*.06,-m,s*.06,s)}
+  else{c.rotate(-tt*1.4);c.fillStyle=col;c.beginPath();c.moveTo(0,-s*.32);c.lineTo(s*.3,s*.22);c.lineTo(-s*.3,s*.22);c.closePath();c.fill()}
+  c.restore();
+}
+PV.lm=function(c,w,h,t){
+  c.fillStyle=C.ink;c.fillRect(0,0,w,h);
+  var cols=11,rows=9,g=2,s=Math.min((w-g*(cols+1))/cols,(h-g*(rows+1))/rows),ox=(w-(s+g)*cols+g)/2,oy=(h-(s+g)*rows+g)/2,i;
+  for(i=0;i<99;i++)tile(c,ox+(i%cols)*(s+g),oy+Math.floor(i/cols)*(s+g),s,i,t);
+  var P=3,n=Math.floor(t/P),u=(t%P)/P,idx=Math.floor(hs(n+3)*99),k=E.back(seg(u,.05,.3))*(1-E.io(seg(u,.82,.98)));
+  if(k>0.01){var tx=ox+(idx%cols)*(s+g),ty=oy+Math.floor(idx/cols)*(s+g),S=h*.62,bx=lerp(tx,(w-S)/2,k),by=lerp(ty,(h-S)/2,k),bs=lerp(s,S,k);
+    c.fillStyle="rgba(0,0,0,"+(.45*cl(k))+")";c.fillRect(0,0,w,h);
+    c.fillStyle=C.ink;c.fillRect(bx+5,by+5,bs,bs);tile(c,bx,by,bs,idx,t);c.strokeStyle=C.c3;c.lineWidth=4;c.strokeRect(bx,by,bs,bs);
+    if(k>.8){var lb="スタイル "+(idx+1)+" / 99";c.font=sans(Math.max(10,h*.07));var lw=c.measureText(lb).width+16;c.fillStyle=C.c3;rr(c,bx,by+bs+6,lw,h*.1,h*.05);c.fill();c.fillStyle="#0c0d12";c.textBaseline="middle";c.fillText(lb,bx+8,by+bs+6+h*.052)}}
+};
+/* shotcraft */
+function scene(c,x,y,w,h,k,p,i){
+  c.save();rr(c,x,y,w,h,4);c.clip();c.fillStyle=(i%3===1)?C.ink:C.bg;c.fillRect(x,y,w,h);c.translate(x+w/2,y+h/2);
+  var q=E.io(p),z=1,dx=0,dy=0,ro=0;
+  if(k===0)z=1+q*.8;else if(k===1)dx=lerp(w*.35,-w*.35,q);else if(k===2)ro=lerp(-.5,.5,q);else if(k===3)dy=lerp(h*.4,-h*.4,q);else if(k===4)z=1.8-q*.8;else if(k===5){dx=lerp(-w*.6,0,E.out(p));z=1.1}
+  c.rotate(ro);c.scale(z,z);c.translate(dx,dy);
+  var col=C.pal[i%5];c.fillStyle=col;rr(c,-w*.16,-h*.24,w*.32,h*.48,3);c.fill();c.fillStyle=C.pal[(i+2)%5];c.beginPath();c.arc(w*.22,-h*.12,h*.12,0,7);c.fill();
+  c.fillStyle=(i%3===1)?C.bg:C.ink;c.fillRect(-w*.42,h*.3,w*.5,h*.06);c.fillRect(-w*.42,-h*.38,w*.2,h*.05);
+  c.restore();
+}
+PV.sc=function(c,w,h,t){
+  c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  var gw=w*.56,cols=4,rows=3,g=5,tw=(gw-g*(cols+1))/cols,th=(h-g*(rows+1))/rows,i,P=2.6,n=Math.floor(t/P),sel=Math.floor(hs(n+11)*12),prev=Math.floor(hs(n+10)*12),u=(t%P)/P;
+  var nm=["push-in","pan","orbit","tilt","pull-out","slide-in"];
+  function pos(j){return [g+(j%cols)*(tw+g),g+Math.floor(j/cols)*(th+g)]}
+  for(i=0;i<12;i++){var p=pos(i);scene(c,p[0],p[1],tw,th,i%6,(t*.5+hs(i))%1,i);c.strokeStyle=C.ink;c.lineWidth=1.5;rr(c,p[0],p[1],tw,th,4);c.stroke()}
+  var a=pos(prev),b=pos(sel),k=E.io(seg(u,0,.3)),cx=lerp(a[0],b[0],k),cy=lerp(a[1],b[1],k);
+  c.strokeStyle=C.c2;c.lineWidth=4;rr(c,cx-2,cy-2,tw+4,th+4,6);c.stroke();
+  c.fillStyle=C.c2;c.beginPath();var px=cx+tw*.7,py=cy+th*.7;c.moveTo(px,py);c.lineTo(px,py+15);c.lineTo(px+4,py+11);c.lineTo(px+7,py+17);c.lineTo(px+10,py+15);c.lineTo(px+7,py+10);c.lineTo(px+12,py+10);c.closePath();c.fill();
+  var bx=gw+6,bw=w-bx-10,bh=bw*9/16,by=(h-bh)/2-8,kk=E.back(seg(u,.3,.5));
+  c.fillStyle=C.ink;rr(c,bx+4,by+4,bw,bh,6);c.fill();
+  if(kk>0){c.save();c.translate(bx+bw/2,by+bh/2);c.scale(kk,kk);scene(c,-bw/2,-bh/2,bw,bh,sel%6,seg(u,.35,1),sel);c.strokeStyle=C.ink;c.lineWidth=2;rr(c,-bw/2,-bh/2,bw,bh,6);c.stroke();c.restore()}
+  c.fillStyle=C.ink;c.font=mono(Math.max(9,h*.065));c.textBaseline="top";c.fillText("Shot "+("0"+(sel+1)).slice(-2)+"  "+nm[sel%6],bx,by+bh+10);
+};
+/* motion graphics skills */
+PV.mg=function(c,w,h,t){
+  var u=t%6,i;c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  var cw=w*.7,ch=h*.74,k=E.out(seg(u,0,.7)),o=1-seg(u,5.4,5.9);
+  c.save();c.translate(w*.44,h*.5+(1-k)*30);c.transform(1,Math.sin(t*.7)*.03,-.06+Math.sin(t*.5)*.02,1,0,0);c.globalAlpha=cl(k)*o;
+  c.fillStyle=C.ink;rr(c,-cw/2+6,-ch/2+6,cw,ch,10);c.fill();c.fillStyle=C.bg;rr(c,-cw/2,-ch/2,cw,ch,10);c.fill();c.strokeStyle=C.ink;c.lineWidth=2;c.stroke();
+  var x=-cw/2+16,y=-ch/2+18;c.fillStyle=C.c2;rr(c,x,y,cw*.16,ch*.09,3);c.fill();c.fillStyle="#fff";c.font=sans(ch*.06);c.textBaseline="middle";c.fillText("NEWS",x+5,y+ch*.048);
+  var f=ch*.125;c.font=disp(f);var l1="AI動画は、",l2="演出で差がつく";
+  var hk=E.io(seg(u,1.2,2.2)),tw2=c.measureText(l2).width;
+  c.fillStyle=C.ink;c.textBaseline="alphabetic";c.fillText(l1,x,y+ch*.28);
+  c.fillStyle=C.c3;c.globalAlpha=cl(k)*o*.85;c.beginPath();var hy=y+ch*.36,hh=f*.95;c.moveTo(x-4,hy+3);for(i=0;i<=10;i++){c.lineTo(x-4+(tw2+8)*hk*i/10,hy+(hs(i)*5-2))}for(i=10;i>=0;i--){c.lineTo(x-4+(tw2+8)*hk*i/10,hy+hh+(hs(i+20)*5-2))}c.closePath();c.fill();
+  c.globalAlpha=cl(k)*o;c.fillStyle=C.ink;c.fillText(l2,x,y+ch*.44);
+  for(i=0;i<4;i++){var lk=E.out(seg(u,.5+i*.12,1.1+i*.12));c.fillStyle=C.line;rr(c,x,y+ch*.55+i*ch*.085,(cw-32)*(i===3?.5:1)*lk,ch*.04,3);c.fill()}
+  var h2=E.io(seg(u,2.6,3.3));c.fillStyle=C.c1;c.globalAlpha=cl(k)*o*.35;c.fillRect(x+(cw-32)*.2,y+ch*.62,(cw-32)*.5*h2,ch*.07);
+  c.restore();
+  var tk=E.back(seg(u,3.4,4))*o;if(tk>0){c.save();c.translate(w*.76,h*.74);c.scale(tk,tk);c.rotate(-.05);c.fillStyle="#0e1117";rr(c,-w*.2,-h*.15,w*.4,h*.3,8);c.fill();c.strokeStyle=C.ink;c.lineWidth=2;c.stroke();
+    c.font=mono(Math.max(8,h*.055));c.textBaseline="middle";var s1="$ npx remotion render",tk2=seg(u,4,4.9);c.fillStyle="#7ee0a8";c.fillText(s1.slice(0,Math.ceil(s1.length*tk2)),-w*.18,-h*.05);if(u>5){c.fillStyle="#fff";c.fillText("✓ out.mp4",-w*.18,h*.05)}c.restore()}
+};
+/* muse-motion */
+PV.mm=function(c,w,h,t){
+  var T=9,u=t%T,st=Math.min(4,Math.floor(u/1.7)),p=(u-st*1.7)/1.7,i,nm=["台本","声","映像","効果音","確認"];
+  c.fillStyle="#16332b";c.fillRect(0,0,w,h);c.strokeStyle="rgba(255,255,255,.06)";for(i=0;i<8;i++){c.beginPath();c.moveTo(0,i*h/8+((i*13)%7));c.lineTo(w,i*h/8+((i*7)%9));c.stroke()}
+  var y=h*.2,x0=w*.1,x1=w*.9;c.strokeStyle="rgba(255,255,255,.3)";c.lineWidth=3;c.beginPath();c.moveTo(x0,y);c.lineTo(x1,y);c.stroke();
+  var prog=cl((st+cl(p*1.2))/4);if(u>8.5)prog=1;c.strokeStyle="#ffd04d";c.beginPath();c.moveTo(x0,y);c.lineTo(lerp(x0,x1,prog),y);c.stroke();
+  for(i=0;i<5;i++){var x=lerp(x0,x1,i/4),on=i===st,done=i<st,r=h*.055*(on?1.3+.12*Math.sin(t*6):1);c.fillStyle=done?"#35d39b":on?"#ffd04d":"#16332b";c.strokeStyle="#fff";c.lineWidth=2;c.beginPath();c.arc(x,y,r,0,7);c.fill();c.stroke();
+    c.fillStyle="#fff";c.font=sans(Math.max(9,h*.07));c.textAlign="center";c.textBaseline="top";c.fillText(nm[i],x,y+h*.09);
+    if(done){c.strokeStyle="#16332b";c.lineWidth=2.5;c.beginPath();c.moveTo(x-r*.4,y);c.lineTo(x-r*.1,y+r*.35);c.lineTo(x+r*.45,y-r*.3);c.stroke()}}
+  c.textAlign="left";
+  var bx=w*.1,by=h*.45,bw=w*.8,bh=h*.46;c.strokeStyle="rgba(255,255,255,.7)";c.lineWidth=2;rr(c,bx,by,bw,bh,10);c.stroke();
+  c.save();rr(c,bx,by,bw,bh,10);c.clip();c.fillStyle="#fff";
+  if(st===0){var ls=["1｜AI動画の始め方","2｜スキルを入れる","3｜短い一言で頼む"];c.font=sans(bh*.17);c.textBaseline="middle";ls.forEach(function(s,j){var k=seg(p,j*.25,j*.25+.3);c.fillText(s.slice(0,Math.ceil(s.length*k)),bx+16,by+bh*(.24+j*.27))})}
+  else if(st===1){for(i=0;i<46;i++){var v=bh*.38*Math.abs(Math.sin(i*.6+t*7)*Math.sin(i*.13+t*2));c.fillStyle=i/46<p?"#ffd04d":"rgba(255,255,255,.5)";c.fillRect(bx+14+i*(bw-28)/46,by+bh/2-v,(bw-28)/46-2,v*2+2)}}
+  else if(st===2){for(i=0;i<4;i++){var k=E.back(seg(p,i*.16,i*.16+.3)),sw=(bw-50)/4,sx=bx+10+i*(sw+10);c.save();c.translate(sx+sw/2,by+bh/2);c.scale(Math.max(0,k),Math.max(0,k));c.fillStyle=["#6f93ff","#ff6b5c","#ffd04d","#ad82ff"][i];rr(c,-sw/2,-bh*.32,sw,bh*.64,5);c.fill();c.fillStyle="#fff";tri(c,0,0,bh*.09,0);c.restore()}}
+  else if(st===3){for(i=0;i<5;i++){var q=(p*2+i*.2)%1,cx=bx+bw*(.15+i*.175),r2=bh*.3*E.out(q);c.strokeStyle=["#ffd04d","#ff6b5c","#6f93ff","#35d39b","#ad82ff"][i];c.globalAlpha=1-q;c.lineWidth=4;c.beginPath();c.arc(cx,by+bh/2,r2,0,7);c.stroke();c.globalAlpha=1;c.fillStyle=c.strokeStyle;c.beginPath();c.arc(cx,by+bh/2,4,0,7);c.fill()}}
+  else{var cs=["文字切れなし","重なりなし","音ズレなし"];c.font=sans(bh*.17);c.textBaseline="middle";cs.forEach(function(s,j){var k=E.back(seg(p,j*.22,j*.22+.2));if(k<=0)return;var yy=by+bh*(.24+j*.27);c.fillStyle="#35d39b";c.beginPath();c.arc(bx+26,yy,bh*.09*k,0,7);c.fill();c.fillStyle="#fff";c.fillText(s,bx+46,yy)})}
+  c.restore();
+};
+/* onetake */
+PV.ot=function(c,w,h,t){
+  c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  var S=[[0,0],[520,-120],[1040,90],[1560,-60],[2080,60]],T=12,u=t%T,sg=Math.min(3,Math.floor(u/3)),p=E.io(seg(u-sg*3,.3,2.7)),i;
+  var cx=lerp(S[sg][0],S[sg+1][0],p),cy=lerp(S[sg][1],S[sg+1][1],p),z=(h/260)*(1-.32*Math.sin(p*Math.PI)),rot=Math.sin(p*Math.PI)*.07*(sg%2?1:-1);
+  c.save();c.translate(w/2,h/2);c.rotate(rot);c.scale(z,z);c.translate(-cx,-cy);
+  for(i=0;i<60;i++){c.fillStyle=C.line;c.beginPath();c.arc(hs(i)*2600-260,hs(i+99)*700-350,2+hs(i+5)*4,0,7);c.fill()}
+  c.strokeStyle=C.ink;c.lineWidth=4;c.setLineDash([14,12]);c.beginPath();S.forEach(function(s,j){if(j)c.lineTo(s[0],s[1]);else c.moveTo(s[0],s[1])});c.stroke();c.setLineDash([]);
+  // station 0
+  c.fillStyle=C.c2;c.beginPath();c.arc(0,0,80,0,7);c.fill();c.fillStyle="#fff";c.font=disp(40);c.textAlign="center";c.textBaseline="middle";c.fillText("ONE",0,2);
+  // 1 grid
+  for(i=0;i<9;i++){c.fillStyle=C.pal[i%5];c.save();c.translate(520+(i%3-1)*56,-120+(Math.floor(i/3)-1)*56);c.rotate(t+i);rr(c,-20,-20,40,40,6);c.fill();c.restore()}
+  // 2 bars
+  for(i=0;i<5;i++){var bh=40+70*Math.abs(Math.sin(t*1.5+i));c.fillStyle=i%2?C.c1:C.ink;c.fillRect(1040-90+i*38,90+70-bh,28,bh)}
+  // 3 text
+  c.fillStyle=C.c3;rr(c,1560-120,-60-50,240,100,16);c.fill();c.strokeStyle=C.ink;c.lineWidth=4;c.stroke();c.fillStyle="#0c0d12";c.fillText("TAKE",1560,-58);
+  // 4 tri
+  c.fillStyle=C.c4;tri(c,2080,60,80,t*.6);
+  c.restore();c.textAlign="left";
+  c.strokeStyle=C.ink;c.lineWidth=2;var m=12,L=16;[[m,m,1,1],[w-m,m,-1,1],[m,h-m,1,-1],[w-m,h-m,-1,-1]].forEach(function(q){c.beginPath();c.moveTo(q[0]+L*q[2],q[1]);c.lineTo(q[0],q[1]);c.lineTo(q[0],q[1]+L*q[3]);c.stroke()});
+  if(Math.floor(t*2)%2){c.fillStyle=C.c2;c.beginPath();c.arc(m+14,m+14,5,0,7);c.fill()}
+  c.fillStyle=C.ink;c.font=mono(Math.max(9,h*.06));c.textBaseline="middle";c.fillText("REC 00:"+("0"+Math.floor(u)).slice(-2)+"   カット数 0",m+26,m+15);
+};
+/* awesome */
+PV.aw=function(c,w,h,t){
+  c.fillStyle=C.sur;c.fillRect(0,0,w,h);var cols=6,g=6,cw=(w-g*(cols+1))/cols,ch=cw*.72,i,j;
+  for(i=0;i<cols;i++){var dir=i%2?1:-1,sp=14+hs(i)*16,off=(t*sp*dir)%(ch+g);for(j=-2;j<h/(ch+g)+2;j++){var x=g+i*(cw+g),y=j*(ch+g)+off,id=i*31+j+Math.floor(t*sp*dir/(ch+g))*-1;
+    c.fillStyle=C.bg;rr(c,x,y,cw,ch,5);c.fill();c.strokeStyle=C.ink;c.lineWidth=1.5;c.stroke();c.fillStyle=C.pal[((id%5)+5)%5];rr(c,x+4,y+4,cw-8,ch*.42,3);c.fill();c.fillStyle="#fff";tri(c,x+cw/2,y+4+ch*.21,ch*.09,0);
+    c.fillStyle=C.line;c.fillRect(x+5,y+ch*.58,cw-10,ch*.08);c.fillRect(x+5,y+ch*.74,(cw-10)*.6,ch*.08)}}
+  var n=Math.min(703,Math.floor(703*E.out(seg(t%8,0,2.5)))),bw=h*.95,bh=h*.42;c.fillStyle=C.ink;rr(c,w/2-bw/2+5,h/2-bh/2+5,bw,bh,bh/2);c.fill();c.fillStyle=C.c3;rr(c,w/2-bw/2,h/2-bh/2,bw,bh,bh/2);c.fill();c.strokeStyle=C.ink;c.lineWidth=3;c.stroke();
+  c.fillStyle="#0c0d12";c.textAlign="center";c.textBaseline="middle";c.font=disp(bh*.5);c.fillText(n+"本",w/2,h/2-bh*.06);c.font=sans(bh*.15);c.fillText("指示文つき",w/2,h/2+bh*.3);c.textAlign="left";
+};
+/* Motion */
+PV.mo=function(c,w,h,t){
+  c.fillStyle=C.sur;c.fillRect(0,0,w,h);var P=1.8,n=Math.floor(t/P),u=(t%P)/P,i,m=14,W=w-m*2,H=h-m*2;
+  function lay(L,i){if(L===0){var cw=(W-20)/3,ch=(H-10)/2;return [m+(i%3)*(cw+10),m+Math.floor(i/3)*(ch+10),cw,ch]}
+    if(L===1){var rh=(H-50)/6;return [m+W*.1,m+i*(rh+10),W*.8,rh]}
+    if(i===0)return [m,m,W*.62,H];var sh=(H-40)/5;return [m+W*.66,m+(i-1)*(sh+10),W*.34,sh]}
+  for(i=0;i<6;i++){var a=lay(n%3,i),b=lay((n+1)%3,i),k=E.back(seg(u,.25+i*.04,.75+i*.04)),x=lerp(a[0],b[0],k),y=lerp(a[1],b[1],k),ww=lerp(a[2],b[2],k),hh=lerp(a[3],b[3],k);
+    c.fillStyle=C.ink;rr(c,x+3,y+3,ww,hh,8);c.fill();c.fillStyle=C.pal[i%5];rr(c,x,y,ww,hh,8);c.fill();c.strokeStyle=C.ink;c.lineWidth=2;c.stroke();
+    c.fillStyle="rgba(255,255,255,.85)";c.fillRect(x+8,y+hh/2-3,Math.max(0,ww*.4),6)}
+};
+/* Motion Canvas */
+PV.mc=function(c,w,h,t){
+  var u=t%6,i,j;c.fillStyle=C.sur;c.fillRect(0,0,w,h);c.fillStyle=C.line;for(i=1;i<16;i++)for(j=1;j<9;j++){c.beginPath();c.arc(w*i/16,h*j/9,1.2,0,7);c.fill()}
+  var N=[[w*.16,h*.42,"指示"],[w*.5,h*.42,"AI"],[w*.84,h*.42,"動画"]],bw=w*.2,bh=h*.3,o=1-seg(u,5.4,5.9);c.globalAlpha=o;
+  N.forEach(function(nd,k){var p=E.io(seg(u,k*.9,k*.9+.8));if(p<=0)return;var per=2*(bw+bh);c.strokeStyle=C.ink;c.lineWidth=3;c.setLineDash([per*p,per]);
+    if(k===1){c.setLineDash([]);c.beginPath();c.arc(nd[0],nd[1],bh*.6,-1.57,-1.57+6.283*p);c.stroke()}else{rr(c,nd[0]-bw/2,nd[1]-bh/2,bw,bh,8);c.stroke()}
+    c.setLineDash([]);if(p>=1){var f=E.back(seg(u,k*.9+.8,k*.9+1.1));c.fillStyle=C.pal[k*2%5];c.globalAlpha=o*.9*cl(f);if(k===1){c.beginPath();c.arc(nd[0],nd[1],bh*.6-5,0,7);c.fill()}else{rr(c,nd[0]-bw/2+5,nd[1]-bh/2+5,bw-10,bh-10,5);c.fill()}
+      c.globalAlpha=o*cl(f);c.fillStyle=k===1?"#0c0d12":"#fff";c.font=sans(bh*.3);c.textAlign="center";c.textBaseline="middle";c.fillText(nd[2],nd[0],nd[1]+1);c.globalAlpha=o}});
+  c.textAlign="left";
+  [[N[0][0]+bw/2+4,N[1][0]-bh*.6-6,.8],[N[1][0]+bh*.6+6,N[2][0]-bw/2-4,1.7]].forEach(function(a){var p=E.io(seg(u,a[2],a[2]+.5));if(p<=0)return;var x2=lerp(a[0],a[1],p),y=h*.42;c.strokeStyle=C.c2;c.lineWidth=3;c.beginPath();c.moveTo(a[0],y);c.lineTo(x2,y);c.stroke();c.fillStyle=C.c2;tri(c,x2,y,7,0)});
+  var s="yield* rect().opacity(1, 0.5)",tp=seg(u,2.8,4.2);c.fillStyle=C.mut;c.font=mono(Math.max(8,h*.06));c.textBaseline="middle";c.fillText(s.slice(0,Math.ceil(s.length*tp)),w*.08,h*.84);
+  if(u>3){var q=((u-3)*.6)%1,x3=lerp(N[0][0],N[2][0],q);c.fillStyle=C.c3;c.strokeStyle=C.ink;c.lineWidth=2;c.beginPath();c.arc(x3,h*.42-bh*.75,6,0,7);c.fill();c.stroke()}
+  c.globalAlpha=1;
+};
+/* Ola */
+PV.ol=function(c,w,h,t,st,dt){
+  if(st.v===undefined){st.v=400;st.hist=[];st.acc=0}
+  var n=Math.floor(t/1.3),target=200+Math.floor(hs(n+2)*9)*100;st.v+=(target-st.v)*Math.min(1,dt*4);st.acc+=dt;
+  if(st.acc>.04){st.acc=0;st.hist.push([target,st.v]);if(st.hist.length>90)st.hist.shift()}
+  c.fillStyle=C.sur;c.fillRect(0,0,w,h);
+  c.fillStyle=C.mut;c.font=sans(Math.max(9,h*.07));c.textBaseline="top";c.fillText("そのままの数字",w*.06,h*.1);c.fillText("Olaを通した数字",w*.06,h*.48);
+  c.fillStyle=C.mut;c.font=mono(h*.16);c.fillText(fmt(target),w*.06,h*.2);c.fillStyle=C.c1;c.font=disp(h*.24);c.fillText(fmt(st.v),w*.06,h*.58);
+  var gx=w*.46,gw=w*.5,gy=h*.12,gh=h*.76;c.strokeStyle=C.line;c.lineWidth=1.5;c.strokeRect(gx,gy,gw,gh);
+  function ln(k,col,lw){c.strokeStyle=col;c.lineWidth=lw;c.beginPath();st.hist.forEach(function(p,i){var x=gx+gw*i/89,y=gy+gh-(p[k]-100)/1000*gh;if(i)c.lineTo(x,y);else c.moveTo(x,y)});c.stroke()}
+  ln(0,C.mut,2);ln(1,C.c1,4);
+  var L=st.hist.length;if(L){var lp=st.hist[L-1];c.fillStyle=C.c1;c.beginPath();c.arc(gx+gw*(L-1)/89,gy+gh-(lp[1]-100)/1000*gh,6,0,7);c.fill()}
+};
+
+/* ---------- canvas manager ---------- */
+var CV=[],started=false;
+function regAll(){$$("canvas[data-pv]").forEach(function(el){if(el._pv)return;el._pv=1;var it={el:el,fn:PV[el.dataset.pv],vis:false,st:{}};CV.push(it);if(io)io.observe(el)})}
+var io=("IntersectionObserver" in window)?new IntersectionObserver(function(es){es.forEach(function(e){CV.forEach(function(it){if(it.el===e.target)it.vis=e.isIntersecting})})},{rootMargin:"80px"}):null;
+function drawOne(it,t,dt){if(!it.fn)return;var el=it.el,w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;var d=Math.min(2,window.devicePixelRatio||1);
+  if(el.width!==Math.round(w*d)||el.height!==Math.round(h*d)){el.width=Math.round(w*d);el.height=Math.round(h*d)}
+  var c=el.getContext("2d");c.setTransform(d,0,0,d,0,0);c.globalAlpha=1;c.textAlign="left";c.setLineDash([]);
+  try{it.fn(c,w,h,t,it.st,dt)}catch(e){if(!it.err){it.err=1;console.error("pv "+el.dataset.pv+" "+e.message)}}}
+var last=0;
+function loop(ts){var t=ts/1000,dt=Math.min(.1,t-last);last=t;CV.forEach(function(it){if(it.vis||!io)drawOne(it,t,dt)});requestAnimationFrame(loop)}
+function drawAllOnce(){if(!reduce&&started)return;CV.forEach(function(it){drawOne(it,3.1,.016)})}
+
+/* ---------- repo mock ---------- */
+function repoMock(p,pins){
+  var pin=function(n){return pins?'<span class="pin">'+n+'</span> ':''};
+  return '<div class="win"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="'+p+'Url">'+pin(1)+'github.com/heygen-com/hyperframes</span></div>'+
+  '<div class="repo"><div class="rh"><span class="nm">'+pin(2)+'heygen-com / hyperframes</span><span style="display:flex;gap:8px;align-items:center"><span class="star" id="'+p+'Star">'+pin(3)+'★ Star</span><span class="codeb" id="'+p+'Code">'+pin(4)+'Code ▾</span></span></div>'+
+  '<div class="files" id="'+p+'Files"><div>skills/<span>スキルの入ったフォルダ</span></div><div>SKILL.md<span>手順書</span></div><div>README.md<span>説明ページ</span></div></div>'+
+  '<div class="readme"><b>'+pin(5)+'README</b><span class="small">Install</span><div class="cmd" id="'+p+'Cmd">npx skills add heygen-com/hyperframes</div></div></div></div>';
+}
+$("#repoFig").innerHTML=repoMock("f",true);
+$("#scrRepo").innerHTML=repoMock("r",false);
+
+$$(".tgl .chip").forEach(function(b){b.addEventListener("click",function(){var on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",on);FL[b.dataset.k]=on?1:0;drawAllOnce()})});
+
+/* ---------- skills ---------- */
+var S=[
+{id:"hf",rank:1,name:"HyperFrames",by:"HeyGen公式",url:"https://github.com/heygen-com/hyperframes",tags:["muse","claude"],cat:"base",catL:"土台",
+ one:"迷ったらこれ。人気No.1の動画づくりスキル",
+ desc:"AIがいちばん書き慣れているWebページの技術（HTML）で画面を組み、そのままMP4に書き出します。AIの得意分野で作るので、頼んだ内容がそのまま形になりやすいのが最大の強み。",
+ pow:["この図鑑で最多のスター6万超。AI動画大手HeyGenが無料公開","文字、図、写真、字幕、音声まで1つで対応","解説動画から商品紹介まで、型が豊富"],
+ can:["解説動画、商品紹介、ニュースまとめ","字幕つきの切り抜き、歌詞動画","Webサイトの画面を取り込んだ紹介動画"],
+ facts:["スター6万超","検証での制作 23.5分","Apache-2.0"],
+ chat:"次のコマンドを実行して、スキルを入れて\nnpx skills add heygen-com/hyperframes",
+ cmds:[{l:"コマンド",c:"npx skills add heygen-com/hyperframes"}],
+ prompt:"hyperframes を使って、10秒の商品紹介動画を作って。タイトルはふわっと表示、縦型9:16、BGMあり。",
+ need:"Node.js 22以上、FFmpeg",warn:"書き出しは遅め。比較検証では16個中いちばん長い23.5分でした。"},
+{id:"rm",rank:2,name:"Remotion Skills",by:"Remotion公式",url:"https://github.com/remotion-dev/skills",tags:["muse","claude"],cat:"base",catL:"土台",
+ one:"速さと量産の定番。同じ型で何本でも",
+ desc:"動画を1コマずつプログラムで組み立てるRemotionの公式スキル。名前や数字だけ差し替えた動画を、同じデザインで何本も作る用途に強い土台です。",
+ pow:["インストール12.6万超の定番","検証では4.5分で完成。速い","数字や名前を差し替えるだけで量産"],
+ can:["データを差し替えて量産する動画","アニメーションつきのタイトルや図解","字幕、音声、書体まで含めた構成"],
+ facts:["インストール12.6万超","検証での制作 4.5分"],
+ chat:"次のコマンドを実行して、スキルを入れて\nnpx skills add remotion-dev/skills",
+ cmds:[{l:"コマンド",c:"npx skills add remotion-dev/skills"},{l:"動画プロジェクトごと新しく作る場合",c:"npx create-video@latest --skills"}],
+ prompt:"Remotionのスキルを使って、15秒の縦型動画を作って。内容は「今週のAIニュース3選」。1つずつ順番に表示。",
+ need:"Node.js",warn:"これ単体だと見た目は素の出力に近め。見た目系のスキルと組み合わせる前提。"},
+{id:"gs",rank:3,name:"GSAP Skills",by:"GreenSock公式",url:"https://github.com/greensock/gsap-skills",tags:["muse","claude"],cat:"motion",catL:"動き",
+ one:"動きが一気にプロっぽくなる、緩急の教科書",
+ desc:"世界中のWebサイトで使われるアニメーション技術GSAPの、公式スキル。文字が弾む、時間差で出る、線に沿って動く。こうした気持ちいい動きをAIが正しく書けるようになります。",
+ pow:["開発元の公式配布で安心","GSAP本体はプラグイン含め無料","HyperFramesと相性抜群"],
+ can:["文字が1つずつ時間差で出る演出","線に沿って動く、形が入れ替わる動き","土台スキルと組み合わせた滑らかな動画"],
+ facts:["公式配布","8モジュール構成"],
+ chat:"次のコマンドを実行して、スキルを入れて\nnpx skills add https://github.com/greensock/gsap-skills",
+ cmds:[{l:"コマンド",c:"npx skills add https://github.com/greensock/gsap-skills"},{l:"Claude Codeの中から入れる場合",c:"/plugin marketplace add greensock/gsap-skills"}],
+ prompt:"GSAPのスキルを使って、見出しの文字を1文字ずつ時間差で登場させて。最後に少し弾む動きで止めて。",
+ need:"Node.js",warn:"動きの作法を教えるスキル。動画ファイルへの書き出しは土台のスキルが担当。"},
+{id:"lm",rank:4,name:"Lemo-Opuscar",by:"lemomo-ai",url:"https://github.com/lemomo-ai/lemo-opuscar",tags:["claude"],cat:"auto",catL:"丸投げ",
+ one:"99種の映像スタイルから選ぶだけ。音つきで丸ごと完成",
+ desc:"絵画風、切り紙風、図解風、ミニチュア風など99種類のスタイルを収録。番号を選んで内容を伝えると、ナレーションと音楽まで付いた短編が仕上がります。動画生成AIは使わず、すべてコードで描画。",
+ pow:["スタイルが99種。お手本動画つき","ナレーションとオリジナル音楽まで自動","自分専用のスタイルも作って保存できる"],
+ can:["スタイル指定の短編動画","音つきの1本を丸ごとおまかせ","シリーズで見た目を統一"],
+ facts:["スター1.68万","1本 30〜60分","コードはMIT"],
+ chat:"次の2つのコマンドを順番に実行して、スキルを入れて\nclaude plugin marketplace add lemomo-ai/lemo-opuscar\nclaude plugin install lemo-opuscar@lemolab",
+ cmds:[{l:"コマンド（2行を順番に）",c:"claude plugin marketplace add lemomo-ai/lemo-opuscar\nclaude plugin install lemo-opuscar@lemolab"},{l:"呼び出し方",c:"/lemo-opuscar:lemo-opuscar"}],
+ prompt:"/lemo-opuscar:lemo-opuscar　スタイル一覧を見せて。その中から切り紙風を選んで、30秒の「AIの始め方」動画を作って。",
+ need:"Node.js 20以上、FFmpeg 7以上、Python 3.11以上、Claudeのモデル",warn:"Claude向けの設計で、他のAIでは再現度が落ちると明記。スタイルの説明文は非商用ライセンス（CC BY-NC 4.0）。"},
+{id:"sc",rank:5,name:"video-shotcraft",by:"Vincentwei1021",url:"https://github.com/Vincentwei1021/video-shotcraft",tags:["muse","claude"],cat:"look",catL:"見た目",
+ one:"言葉にしなくていい。106の見本を指さして頼める",
+ desc:"寄る、引く、回り込む。カメラの動かし方の見本が約106種類そろった見本帳です。演出を言葉で説明するのが苦手でも、番号で選ぶだけで狙った絵になります。",
+ pow:["ショット見本が約106、動きの見本が約161","36秒・10ショットのひな形つき","商品やアプリの紹介に強い"],
+ can:["商品やアプリの紹介動画","見本を選んで頼む演出指定","ひな形から始める時短制作"],
+ facts:["スター約5.4k","Apache-2.0"],
+ chat:"次のコマンドを実行して、スキルを入れて\nnpx skills add Vincentwei1021/video-shotcraft",
+ cmds:[{l:"コマンド",c:"npx skills add Vincentwei1021/video-shotcraft"}],
+ prompt:"video-shotcraft のショット一覧から、商品を大きく見せるものを3つ提案して。選んだもので15秒の紹介動画を作って。",
+ need:"Node.js（Remotionで書き出し）",warn:"製品紹介向けの見本が中心。"},
+{id:"mg",rank:6,name:"Remotion Motion Graphics Skills",by:"Liamrjohnston",url:"https://github.com/Liamrjohnston/remotion-motion-graphics-skill",tags:["muse","claude"],cat:"look",catL:"見た目",
+ one:"AIっぽさを消す、テレビ品質の演出ルール",
+ desc:"ネオン、光る効果、紫のグラデーション。AIが選びがちな見た目を禁止し、ニュース番組のような落ち着いた演出に導くルール集です。記事にマーカーを引く、カメラが空間を移動する、といった型が4つ入り。",
+ pow:["「2秒以内に伝わる」など明確な基準つき","マーカー、カメラ、ターミナル実演の型","コマンド1つで4スキルがまとめて入る"],
+ can:["記事の一文にマーカーを引く見せ方","ひと続きの空間をカメラが動く演出","黒い画面の実演風カット"],
+ facts:["4スキル入り","MIT","スター数は未確認"],
+ chat:"次のコマンドを実行して、スキルを入れて\nnpx skills add liamrjohnston/remotion-motion-graphics-skill",
+ cmds:[{l:"コマンド",c:"npx skills add liamrjohnston/remotion-motion-graphics-skill"}],
+ prompt:"motion-graphics のスキルに沿って、ニュース記事の一文にマーカーを引く5秒のカットを作って。ネオンや光る効果は使わないで。",
+ need:"Node.js（Remotionで書き出し）",warn:"個人作のスキル。入れる前に中身を一読。"},
+{id:"mm",rank:7,name:"muse-motion-skills",by:"nxrskyaa",url:"https://github.com/nxrskyaa/muse-motion-skills",tags:["muse"],cat:"auto",catL:"丸投げ",
+ one:"Museに丸投げ。台本から声・効果音まで1本仕上げ",
+ desc:"資料を渡すと、台本づくり、ナレーション、映像、効果音、最後の見直しまでを順番に進める手順書です。黒板風、切り紙風、浮世絵風など11種のスタイルから選べます。",
+ pow:["台本から確認まで5工程を通しで担当","11種のスタイルで毎回ちがう見た目","書き出し後にAIが自分でコマを見直す"],
+ can:["資料や記事から縦型の解説動画","スタイルを選んだシリーズ制作","音つきの1本をおまかせ"],
+ facts:["Muse向け","MIT","スター数は未確認"],
+ chat:"https://github.com/nxrskyaa/muse-motion-skills の SKILL.md を読んで、使える状態にして",isMsg:1,
+ cmds:[],
+ prompt:"muse-motion-skills の SKILL.md を読んで、[テーマ] について [資料] をもとに、chalk-lecture スタイルで縦型9:16の解説動画を作って。",
+ need:"Node.js 18以上、FFmpeg、Python 3、音声読み上げ用の tts コマンド",warn:"専用のインストールコマンドはなく、SKILL.md を読ませる方式。音声には tts コマンドの用意が必要。"},
+{id:"ot",rank:8,name:"onetake",by:"feitangyuan",url:"https://github.com/feitangyuan/onetake",tags:["muse","claude"],cat:"look",catL:"見た目",
+ one:"カットなしで引き込む、ワンカット演出の専門家",
+ desc:"場面を切り替えず、1台のカメラが空間を進み続ける見せ方に特化。視線が途切れないので、ひとつの話を最後まで見せたい動画に向きます。",
+ pow:["カット数ゼロの連続カメラ","検証では音つきで8.5分","ひとつのアイデアを深く見せる"],
+ can:["工程や流れを一筆書きで見せる動画","画面の奥や横へ進んでいく演出","音つきでの仕上げ"],
+ facts:["検証での制作 8.5分","音あり","スター約2〜4k"],
+ chat:"https://github.com/feitangyuan/onetake をインストールして、使える状態にして",isMsg:1,
+ cmds:[],
+ prompt:"onetake を使って、カメラが途切れず横に進む15秒の動画を作って。内容は「AI動画ができるまでの3工程」。",
+ need:"リポジトリの説明を確認",warn:"公式の入れ方はこのページでは未確認。AIにURLを渡す方法を案内しています。"},
+{id:"aw",rank:0,rl:"番外",name:"Awesome Opus 5.5 Videos",by:"yihui-dev",url:"https://github.com/yihui-dev/awesome-opus5-5-videos",tags:["muse","claude"],cat:"idea",catL:"ネタ帳",
+ one:"話題のAI動画703本。指示文つきのネタ帳",
+ desc:"Xで話題になったAI動画と、その動画を作った指示文を集めたコレクション。作る前に眺めて、気に入った演出の指示文を自分用に書き換える使い方が便利です。",
+ pow:["指示文703本、動く再現例418本","モーション、解説、3D、ゲームに分類","入れる作業なし。開いて読むだけ"],
+ can:["演出の方向を決める参考","指示文の書き方の勉強","完成例を見ながらのネタ探し"],
+ facts:["スター9.7k","MIT"],chat:"",cmds:[],
+ prompt:"（気に入った指示文を貼り付けて）この指示文を参考に、内容を「今週のAIニュース」に置き換えて作って。",
+ need:"なし。ブラウザで開いて読むだけ",warn:"他の作者の指示文を集めたもの。指示文が非公開で元投稿へのリンクだけの項目もあり。紹介するときは作者名を残すのが安心。"},
+{id:"mo",rank:0,rl:"部品",name:"Motion",by:"ライブラリ",url:"https://github.com/motiondivision/motion",tags:["muse","claude"],cat:"parts",catL:"部品",
+ one:"画面の切り替えが、ぬるっと気持ちよく決まる",
+ desc:"並び方が変わるとき、要素が瞬間移動せず、すべるように移動します。シーン転換の安っぽさを消す定番の部品。",
+ pow:["レイアウト変化を自動でなめらかに","要素の出入りに強い"],can:[],facts:["定番ライブラリ"],chat:"",cmds:[],
+ prompt:"シーンの切り替えは Motion を使って、なめらかにつないで。",need:"AIが必要に応じて取り込み",warn:""},
+{id:"mc",rank:0,rl:"部品",name:"Motion Canvas",by:"ライブラリ",url:"https://github.com/motion-canvas/motion-canvas",tags:["muse","claude"],cat:"parts",catL:"部品",
+ one:"説明が伝わる。線から描く図解アニメ",
+ desc:"丸、四角、矢印を線から順に描いていく、解説動画向けの部品。仕組みや流れの説明に強く、教育系の動画でよく使われます。",
+ pow:["図形と矢印を順番に描画","仕組みの説明、比較図に最適"],can:[],facts:["図解向き"],chat:"",cmds:[],
+ prompt:"この仕組みを Motion Canvas で図解アニメにして。丸、矢印、四角の順に描いて。",need:"AIが必要に応じて取り込み",warn:""},
+{id:"ol",rank:0,rl:"部品",name:"Ola",by:"ライブラリ",url:"https://github.com/franciscop/ola",tags:["muse","claude"],cat:"parts",catL:"部品",
+ one:"数字がスーッと増える、なめらかカウントアップ",
+ desc:"数字がカクッと切り替わらず、目標の値をなめらかに追いかけます。フォロワー数や売上など、数字を見せる場面の印象が変わる小さな部品。",
+ pow:["値の変化を自動でなめらかに","グラフの伸びにも使える"],can:[],facts:["小さくて軽い"],chat:"",cmds:[],
+ prompt:"数字のカウントアップは Ola を使って、なめらかに増えるようにして。",need:"AIが必要に応じて取り込み",warn:""}
+];
+var byId={};S.forEach(function(s){byId[s.id]=s});
+$("#mq").innerHTML=(function(){var a=S.map(function(s){return "<span>"+esc(s.name)+"</span>"}).join("");return a+a})();
+
+function cardHTML(s){
+  var tags=s.tags.map(function(t){return '<span class="tag '+t+'">'+(t==="muse"?"Muse":"Claude")+'</span>'}).join("")+'<span class="catp">'+s.catL+'</span>';
+  var easy=s.chat?('<div class="easy"><div class="eh">かんたん　AIのチャットに貼るだけ</div><div class="eb"><div class="txt">'+esc(s.chat)+'</div>'+
+    '<div class="ea"><button class="btn sm yl" type="button" data-copy="'+esc(s.chat)+'">この文をコピー</button><button class="btn sm" type="button" data-mini="'+s.id+'">▶ 貼り付け方を見る</button></div>'+
+    '<p class="small">Claude Code か Muse のチャット欄に貼って送信。'+(s.isMsg?'':'コマンドの意味が分からなくても、AIが代わりに実行します。')+'</p>'+
+    '<div class="mini" id="mini-'+s.id+'"><div class="ms"></div><div class="mw"><div class="mt">AIとのチャット（イメージ）</div><div class="ml"></div><div class="mi"><div class="inp"></div></div></div></div></div></div>'):'';
+  var cm=s.cmds.length?('<details><summary>コマンドを直接使う人向け</summary><div class="in">'+s.cmds.map(function(c){return '<div><div class="lbl">'+esc(c.l)+'</div><div class="cmdrow"><code>'+esc(c.c)+'</code><button class="btn sm" type="button" data-copy="'+esc(c.c)+'">コピー</button></div></div>'}).join("")+'<p class="small">ターミナル（黒い画面）に貼って Enter。</p></div></details>'):'';
+  return '<article class="card" id="s-'+s.id+'" data-cat="'+s.cat+'" data-tags="'+s.tags.join(" ")+' '+s.cat+'">'+
+   '<div class="hd"><div class="rank'+(s.rank?'':' tx')+'">'+(s.rank?s.rank+'<small>位</small>':esc(s.rl))+'</div><div><h3>'+esc(s.name)+'</h3><div class="tags">'+tags+'</div></div></div>'+
+   '<canvas class="pvc" data-pv="'+s.id+'" aria-hidden="true"></canvas>'+
+   '<div class="bd"><p class="one">'+esc(s.one)+'</p><p class="desc">'+esc(s.desc)+'</p>'+
+   '<ul class="pow">'+s.pow.map(function(c){return '<li>'+esc(c)+'</li>'}).join("")+'</ul>'+
+   (s.can.length?'<div><div class="lbl">作れるもの</div><ul>'+s.can.map(function(c){return '<li>'+esc(c)+'</li>'}).join("")+'</ul></div>':'')+
+   '<div class="facts">'+s.facts.map(function(f){return '<span>'+esc(f)+'</span>'}).join("")+'</div>'+easy+cm+
+   '<div><div class="lbl">動画の頼み方の例</div><div class="prm"><span>'+esc(s.prompt)+'</span><button class="btn sm" type="button" data-copy="'+esc(s.prompt)+'">コピー</button></div></div>'+
+   '<details><summary>必要なものと注意点</summary><div class="in"><p class="small"><b>必要なもの</b>　'+esc(s.need)+'</p>'+(s.warn?'<div class="caution"><b>注意</b>　'+esc(s.warn)+'</div>':'')+'<p class="small">作者　'+esc(s.by)+'</p></div></details>'+
+   '<div class="ft"><a class="btn sm pri" href="'+s.url+'" target="_blank" rel="noopener">GitHubで開く ↗</a>'+(s.chat?'<a class="btn sm" href="#irekata">入れ方の実演へ</a>':'')+'</div></div>'+
+  '</article>';
+}
+$("#cards").innerHTML=S.map(cardHTML).join("");
+
+/* mini chat paste animation */
+var miniT={};
+function playMini(id){var s=byId[id],box=$("#mini-"+id);if(!box)return;box.classList.add("on");
+  var log=$(".ml",box),inp=$(".inp",box),st=$(".ms",box);(miniT[id]||[]).forEach(function(x){clearTimeout(x);clearInterval(x)});miniT[id]=[];
+  log.innerHTML="";inp.textContent="";var msg=s.chat,reply=s.isMsg?"読み込みました。スキルを使える状態にしました。":"コマンドを実行しました。\n✓ スキルを追加しました。";
+  function bub(w,tx){var d=document.createElement("div");d.className="msg "+w;d.textContent=tx;log.appendChild(d);return d}
+  if(reduce){st.textContent="貼り付けて送信すると、AIが実行します（返事は例）";bub("u",msg);bub("a",reply);return}
+  st.textContent="① コピーした文を、チャット欄に貼り付け";var i=0;inp.classList.add("caret");
+  var iv=setInterval(function(){i+=3;inp.textContent=msg.slice(0,i);if(i>=msg.length){clearInterval(iv);inp.classList.remove("caret");
+    miniT[id].push(setTimeout(function(){st.textContent="② 送信";inp.textContent="";bub("u",msg);
+      miniT[id].push(setTimeout(function(){st.textContent="③ AIが代わりに実行（返事は例）";var a=bub("a",""),j=0;var iv2=setInterval(function(){j+=2;a.textContent=reply.slice(0,j);if(j>=reply.length){clearInterval(iv2);st.textContent="完了。もう一度見るにはボタンを押す"}},30);miniT[id].push(iv2)},700))},600))}},24);
+  miniT[id].push(iv)}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-mini]");if(b)playMini(b.dataset.mini)});
+
+var F=[["all","すべて"],["muse","Museで使える"],["claude","Claudeで使える"],["base","土台"],["motion","動き"],["look","見た目"],["auto","丸投げ"],["idea","ネタ帳"],["parts","部品"]];
+$("#filters").innerHTML=F.map(function(f,i){return '<button class="chip" type="button" data-f="'+f[0]+'" aria-pressed="'+(i===0)+'">'+f[1]+'</button>'}).join("");
+$("#filters").addEventListener("click",function(e){var b=e.target.closest(".chip");if(!b)return;
+  $$("#filters .chip").forEach(function(c){c.setAttribute("aria-pressed",c===b)});
+  var f=b.dataset.f,n=0;$$("#cards .card").forEach(function(c){var ok=f==="all"||c.dataset.tags.split(" ").indexOf(f)>=0;c.hidden=!ok;if(ok)n++});
+  $("#noHit").hidden=n>0;drawAllOnce()});
+function jump(id){$$("#filters .chip").forEach(function(c,i){c.setAttribute("aria-pressed",i===0)});$$("#cards .card").forEach(function(c){c.hidden=false});
+  var el=$("#s-"+id);if(!el)return;el.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});el.classList.add("flash");setTimeout(function(){el.classList.remove("flash")},1600)}
+
+/* picker */
+var tools=[["muse","Muse"],["code","Claude Code"],["app","Claudeアプリ"]],goals=[["explain","解説・図解の動画"],["promo","商品やサービスの紹介"],["auto","おまかせで1本"],["idea","まずネタを探したい"]];
+var REC={muse:{explain:["mm","hf","gs"],promo:["hf","gs","sc"],auto:["mm","hf","gs"],idea:["aw","mm","hf"]},
+ code:{explain:["hf","gs","mg"],promo:["rm","sc","mg"],auto:["lm","hf","gs"],idea:["aw","lm","hf"]},
+ app:{explain:["gs","aw","hf"],promo:["gs","aw","sc"],auto:["aw","gs","hf"],idea:["aw","gs","hf"]}};
+var WHY={hf:"動画ファイルに仕上げる人気No.1の土台",rm:"速く作れる定番の土台",gs:"動きの質を上げる",mg:"見た目のAIっぽさを消す",sc:"見本から演出を選べる",mm:"台本から音まで通しで担当",lm:"スタイルを選んで丸ごと作る",aw:"作る前の参考になるネタ帳"};
+var pick={tool:"muse",goal:"explain"};
+function chips(el,arr,key){el.innerHTML=arr.map(function(a){return '<button class="chip" type="button" data-v="'+a[0]+'" aria-pressed="'+(pick[key]===a[0])+'">'+a[1]+'</button>'}).join("");
+  el.onclick=function(e){var b=e.target.closest(".chip");if(!b)return;pick[key]=b.dataset.v;chips(el,arr,key);paintPick()}}
+function paintPick(){var ids=REC[pick.tool][pick.goal];
+  var note=pick.tool==="app"?'<div class="caution"><b>補足</b>　Claudeアプリは、ZIPで入れる方式。パソコンの中で動画を書き出すタイプのスキルは Claude Code のほうが確実です。まずは動きの作法とネタ帳から。</div>':(pick.tool==="muse"?'<p class="small">入れ方は、実演の「チャットで頼む」か「Museのフォルダに入れる」を参照。</p>':'<p class="small">入れ方は、実演の「コマンドをチャットに貼る」を参照。</p>');
+  $("#pickRes").innerHTML='<h3>最初に入れる3つ</h3><ol>'+ids.map(function(id){return '<li><a href="#s-'+id+'" data-jump="'+id+'"><b>'+esc(byId[id].name)+'</b></a>　'+WHY[id]+'</li>'}).join("")+'</ol>'+note}
+chips($("#qTool"),tools,"tool");chips($("#qGoal"),goals,"goal");paintPick();
+document.addEventListener("click",function(e){var a=e.target.closest("[data-jump]");if(a){e.preventDefault();jump(a.dataset.jump)}});
+
+/* prompt builder */
+var PB=[["hyperframes を使って","HyperFrames"],["Remotionのスキルを使って","Remotion Skills"],["HyperFramesとGSAPのスキルを使って","HyperFrames + GSAP"],["/lemo-opuscar:lemo-opuscar を使って","Lemo-Opuscar"],["muse-motion-skills の SKILL.md に沿って","muse-motion-skills"],["video-shotcraft のショットから選んで","video-shotcraft"],["onetake を使って","onetake"]];
+$("#pbSkill").innerHTML=PB.map(function(p){return '<option value="'+esc(p[0])+'">'+esc(p[1])+'</option>'}).join("");
+function pbText(){var t=$("#pbTopic").value.trim()||"（ここに内容）";
+  return $("#pbSkill").value+"、動画を作って。\n\n・長さ　"+$("#pbLen").value+"\n・画面の形　"+$("#pbRatio").value+"\n・内容　"+t+"\n・雰囲気　"+$("#pbMood").value+"\n・音　"+($("#pbSound").checked?"ナレーションと効果音あり":"なし")+"\n\n文字は大きめで、スマホでも読めるように。\n完成したら、書き出したコマを自分で見直して、文字切れや重なりがあれば直してから渡して。"}
+function pbPaint(){$("#pbOut").textContent=pbText()}
+$("#pbForm").addEventListener("input",pbPaint);$("#pbForm").addEventListener("submit",function(e){e.preventDefault()});pbPaint();
+$("#pbCopy").addEventListener("click",function(){copyText(pbText())});
+
+/* checklist */
+var TD=["使うAIを決める（Muse か Claude）","GitHubのページを開いて、URLとREADMEの場所を確認","土台のスキルを1つ入れる（HyperFrames か Remotion Skills）","指示文メーカーの文で、10〜15秒の動画を1本作る","動きか見た目のスキルを1つ足して、同じ指示で作り直す","2本を見比べて、気に入った組み合わせを自分の定番にする"];
+var done={};try{done=JSON.parse(store("avz-todo")||"{}")||{}}catch(e){done={}}
+$("#todo").innerHTML=TD.map(function(t,i){return '<li><label for="td'+i+'"><input type="checkbox" id="td'+i+'" data-i="'+i+'"'+(done[i]?" checked":"")+'><span>'+esc(t)+'</span></label></li>'}).join("");
+function paintProg(){var n=$$("#todo input:checked").length;$("#progBar").style.width=(n/TD.length*100)+"%";$("#progTxt").textContent=n+" / "+TD.length+" 完了"+(n===TD.length?"。おつかれさまでした":"")}
+$("#todo").addEventListener("change",function(e){var i=e.target.dataset.i;if(i===undefined)return;done[i]=e.target.checked;store("avz-todo",JSON.stringify(done));paintProg()});paintProg();
+
+/* ---------- demo player ---------- */
+var U="https://github.com/heygen-com/hyperframes",CMD="npx skills add heygen-com/hyperframes";
+var DEMOS=[
+{t:"チャットで頼む",s:"いちばん簡単。Muse・Claude Code共通",note:"AIの返事は例です。実際の文面は毎回変わります。",steps:[
+ {scr:"Repo",cur:"#rUrl",cap:"GitHubでスキルのページを開き、上のURLをコピー",tip:"URLはページの住所。これをAIに渡すだけで場所が伝わります。"},
+ {scr:"Chat",cur:"#chatIn",input:"このスキルをインストールして、使える状態にして\n"+U,typeIn:1,cap:"AIのチャット欄に貼り付けて、こう頼む",tip:"命令文を覚える必要なし。「入れて、使えるようにして」で通じます。"},
+ {scr:"Chat",chat:[{w:"u",t:"このスキルをインストールして、使える状態にして\n"+U},{w:"a",t:"インストールが完了しました。hyperframes というスキルが使えます。"}],typeLast:1,cap:"AIが自分でダウンロードと設定を進める",tip:"途中で許可を求められたら、内容を読んでから承認。"},
+ {scr:"Chat",cur:"#chatIn",chat:[{w:"a",t:"インストールが完了しました。hyperframes というスキルが使えます。"}],input:"hyperframes を使って、10秒の商品紹介動画を作って。縦型9:16、BGMあり",typeIn:1,cap:"スキルの名前を出して、動画を頼む",tip:"名前を出すと、AIがそのスキルを確実に使ってくれます。"},
+ {scr:"Chat",chat:[{w:"u",t:"hyperframes を使って、10秒の商品紹介動画を作って。縦型9:16、BGMあり"},{w:"a",t:"動画を書き出しました。",v:1}],cap:"動画ファイル（MP4）が完成。直したい所は言葉で伝える",tip:"「タイトルを大きく」「もっとゆっくり」など、気になる点をそのまま伝えればOK。"}]},
+{t:"コマンドをチャットに貼る",s:"コマンドって何？という人もこれでOK",note:"Claude Code や Muse のように、パソコンを操作できるAIのチャットで使える方法です。慣れている人はターミナルに直接貼っても同じ結果になります。",steps:[
+ {scr:"Repo",cur:"#rCmd",cap:"README の Install にあるコマンドをコピー",tip:"コマンドはパソコンへの命令文。意味は分からなくて大丈夫。"},
+ {scr:"Chat",title:"Claude Code / Muse のチャット",cur:"#chatIn",input:"次のコマンドを実行して、スキルを入れて\n"+CMD,typeIn:1,cap:"AIのチャット欄に、コマンドをそのまま貼り付け",tip:"一言そえるなら「次のコマンドを実行して」。この図鑑のカードには、貼る用の文をそのまま用意してあります。"},
+ {scr:"Chat",title:"Claude Code / Muse のチャット",chat:[{w:"u",t:"次のコマンドを実行して、スキルを入れて\n"+CMD},{w:"a",t:"コマンドを実行しました。\n✓ hyperframes を追加しました。"}],typeLast:1,cap:"AIが代わりにコマンドを実行",tip:"黒い画面を自分で開かなくても、AIが裏側で実行してくれます。"},
+ {scr:"Chat",title:"Claude Code / Muse のチャット",cur:"#chatIn",chat:[{w:"a",t:"コマンドを実行しました。\n✓ hyperframes を追加しました。"}],input:"hyperframes を使って、10秒の商品紹介動画を作って",typeIn:1,cap:"続けて、同じチャットで動画を頼む",tip:"入れたスキルはすぐ使えます。スキルの名前を出すのがコツ。"},
+ {scr:"Chat",title:"Claude Code / Muse のチャット",chat:[{w:"u",t:"hyperframes を使って、10秒の商品紹介動画を作って"},{w:"a",t:"動画を書き出しました。",v:1}],cap:"動画が完成",tip:"次からは入れ直し不要。同じスキルがずっと使えます。"}]},
+{t:"Museのフォルダに入れる",s:"Museでスキル置き場を指定する方法",note:"利用者の公開ガイドにもとづく手順。このページでは未検証です。",steps:[
+ {scr:"Repo",cur:"#rUrl",cap:"GitHubでスキルのページを開き、URLをコピー",tip:"Museはクラウド上に自分用のパソコンを持っています。そこにスキルを置く流れ。"},
+ {scr:"Chat",title:"Museとのチャット",cur:"#chatIn",input:"~/workspace/custom-skills/ に移動して、\ngit clone "+U+".git を実行して",typeIn:1,cap:"Museに、スキル置き場へダウンロードするよう頼む",tip:"git clone は「GitHubから丸ごとコピーしてくる」という命令。"},
+ {scr:"Term",title:"Museの中のパソコン",term:[{p:1,t:"cd ~/workspace/custom-skills/"},{p:1,t:"git clone "+U+".git"},{t:"✓ 完了"}],cap:"Museが自分のパソコンの中で実行",tip:"custom-skills は、Museがスキルを探しに行くフォルダ。"},
+ {scr:"Chat",title:"Museとのチャット",cur:"#chatIn",chat:[{w:"a",t:"custom-skills に hyperframes を入れました。"}],input:"10秒の解説動画を作って。テーマは「AI動画の始め方」",typeIn:1,cap:"あとは、ふつうに頼むだけ",tip:"入れたスキルはMuseが自動で見つける仕組み。使われない時は名前を出して頼む。"},
+ {scr:"Chat",title:"Museとのチャット",chat:[{w:"u",t:"10秒の解説動画を作って。テーマは「AI動画の始め方」"},{w:"a",t:"動画ができました。",v:1}],cap:"動画が完成",tip:"次の1本も同じスキルが使われます。"}]},
+{t:"ClaudeアプリにZIPで追加",s:"ブラウザやアプリのClaude向け",note:"メニューの名前は公式ヘルプの記載にもとづきます。画面はイメージ。",steps:[
+ {scr:"Repo",cur:"#rCode",cap:"緑の Code ボタン → Download ZIP で一式を保存",tip:"ZIPは、フォルダを1つにまとめた圧縮ファイル。"},
+ {scr:"Set",cur:"#sNav2",set:{},cap:"Claudeで「カスタマイズ」→「スキル」を開く",tip:"スキルを使うには、コード実行の機能がオンになっている必要があります。"},
+ {scr:"Set",cur:"#sPlus",set:{menu:1},cap:"＋ボタン →「スキルを作成」を選ぶ",tip:"自分で作らなくても、できあいのZIPを入れられます。"},
+ {scr:"Set",cur:"#sUp",set:{menu:1,dz:1,file:"skill.zip"},cap:"「スキルをアップロード」でZIPファイルを選ぶ",tip:"ZIPの中に SKILL.md が入っていることが条件。入っていない場合は、スキルのフォルダだけをZIPにし直します。"},
+ {scr:"Set",cur:"#sLst",set:{lst:1},cap:"一覧に出てオンになっていれば準備完了",tip:"動画の書き出しまで行うスキルは、Claude Code のほうが確実に動きます。"}]}
+];
+var di=0,si=0,playing=false,timer=null,typeT=null;
+$("#demoTabs").innerHTML=DEMOS.map(function(d,i){return '<button class="tab" role="tab" type="button" aria-selected="'+(i===0)+'" data-i="'+i+'"><i>方法 '+(i+1)+'</i>'+d.t+'<small>'+d.s+'</small></button>'}).join("");
+function stopType(){if(typeT){clearInterval(typeT);typeT=null}}
+function typeInto(el,text){stopType();if(reduce||!playing){el.textContent=text;return 0}
+  el.textContent="";el.classList.add("caret");var i=0;
+  typeT=setInterval(function(){i+=2;el.textContent=text.slice(0,i);if(i>=text.length){stopType();el.classList.remove("caret")}},32);
+  return text.length/2*32}
+function moveCur(sel){var c=$("#cur"),st=$("#stage");if(!sel){c.style.opacity=0;return}
+  var el=$(sel);if(!el){c.style.opacity=0;return}c.style.opacity=1;
+  var a=st.getBoundingClientRect(),b=el.getBoundingClientRect();
+  c.style.transform="translate("+(b.left-a.left+Math.min(b.width*.5,60))+"px,"+(b.top-a.top+b.height*.5)+"px)";
+  $$(".hl",st).forEach(function(x){x.classList.remove("hl")});el.classList.add("hl");
+  c.classList.remove("click");setTimeout(function(){c.classList.add("click")},720)}
+function paintList(){var d=DEMOS[di];$("#stepList").innerHTML=d.steps.map(function(s,i){return '<li class="'+(i===si?"on":i<si?"done":"")+'"><button type="button" data-s="'+i+'"><span class="no">'+(i<si?"✓":i+1)+'</span><span>'+esc(s.cap)+'<span class="tp">'+esc(s.tip)+'</span></span></button></li>'}).join("")}
+function show(){
+  clearTimeout(timer);stopType();
+  var d=DEMOS[di],s=d.steps[si],extra=0;
+  ["Repo","Term","Chat","Set"].forEach(function(n){$("#scr"+n).classList.toggle("on",n===s.scr)});
+  $$(".hl",$("#stage")).forEach(function(x){x.classList.remove("hl")});
+  $("#termTitle").textContent=s.scr==="Term"&&s.title?s.title:"ターミナル";
+  $("#chatTitle").textContent=s.title||"AIとのチャット";
+  if(s.scr==="Term"){var out=$("#termOut");out.innerHTML="";
+    (s.term||[]).forEach(function(l){var div=document.createElement("div");div.className=l.p?"":"o";
+      if(l.p){var p=document.createElement("span");p.className="p";p.textContent="$ ";div.appendChild(p)}
+      var sp=document.createElement("span");sp.textContent=l.t;div.appendChild(sp);out.appendChild(div)})}
+  if(s.scr==="Chat"){var log=$("#chatLog");log.innerHTML="";
+    (s.chat||[]).forEach(function(m,i){var div=document.createElement("div");div.className="msg "+m.w;var sp=document.createElement("span");div.appendChild(sp);
+      if(m.v){var v=document.createElement("div");v.className="vcard";div.appendChild(v)}
+      log.appendChild(div);
+      if(s.typeLast&&i===s.chat.length-1){extra=typeInto(sp,m.t)}else sp.textContent=m.t});
+    var inp=$("#chatIn");inp.classList.remove("caret");if(s.input){if(s.typeIn)extra=typeInto(inp,s.input);else inp.textContent=s.input}else inp.textContent=""}
+  if(s.scr==="Set"){var z=s.set||{};$("#sMenu").style.display=z.menu?"block":"none";$("#sDz").style.display=z.dz?"block":"none";$("#sFile").textContent=z.file||"";$("#sLst").style.display=z.lst?"flex":"none"}
+  $("#stepNo").textContent=(si+1)+" / "+d.steps.length;$("#capNo").textContent=si+1;
+  $("#capt").textContent=s.cap;$("#tip").textContent=s.tip;$("#demoNote").textContent=d.note;
+  $("#prevB").disabled=si===0;$("#nextB").disabled=si===d.steps.length-1;
+  $("#playB").textContent=playing?"■ 停止":(si===d.steps.length-1?"▶ 最初から":"▶ 再生");
+  paintList();
+  requestAnimationFrame(function(){moveCur(s.cur)});
+  if(playing){if(si<d.steps.length-1){timer=setTimeout(function(){si++;show()},3400+extra)}else{timer=setTimeout(function(){playing=false;show()},2400+extra)}}
+}
+$("#demoTabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;di=+b.dataset.i;si=0;playing=!reduce;$$("#demoTabs .tab").forEach(function(t){t.setAttribute("aria-selected",t===b)});show()});
+$("#stepList").addEventListener("click",function(e){var b=e.target.closest("[data-s]");if(!b)return;playing=false;si=+b.dataset.s;show()});
+$("#prevB").addEventListener("click",function(){playing=false;if(si>0)si--;show()});
+$("#nextB").addEventListener("click",function(){playing=false;if(si<DEMOS[di].steps.length-1)si++;show()});
+$("#playB").addEventListener("click",function(){if(playing){playing=false}else{if(si===DEMOS[di].steps.length-1)si=0;playing=true}show()});
+window.addEventListener("resize",function(){moveCur(DEMOS[di].steps[si].cur);drawAllOnce()});
+show();
+
+/* start canvases */
+regAll();readC();paintTheme();
+if(reduce){drawAllOnce()}else{started=true;requestAnimationFrame(loop)}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){drawAllOnce()});
+})();
+</script>
+</body>
+</html>
